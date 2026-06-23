@@ -53,7 +53,7 @@ PluginName/
 ├── PluginName.dll
 ├── PluginInfo.json
 ├── config.json
-├── config-commented.json
+├── config.example.jsonc
 ├── README.md
 └── CHANGELOG.md
 ```
@@ -74,7 +74,7 @@ PluginName/
 - 插件实际读取的位置必须和包内文件一致。
 - `PluginInfo.json` 必须在插件根目录。
 - `config.json` 应该是干净、可被严格 JSON 解析的运行配置。
-- 带注释的配置说明文件只给人看，不要作为运行配置读取。
+- 带注释的配置说明文件只给人看，不要作为运行配置读取；如果里面有 `//` 注释，即使命名为 `.json`，也应按 JSONC/说明文件处理。
 - 如果包含 `.dll.arkapi`、签名、校验或兼容文件，要在 README 里说明用途。
 
 如果插件配置较复杂，也可以采用：
@@ -84,7 +84,7 @@ PluginName/
 ├── PluginName.dll
 ├── PluginInfo.json
 ├── config.json
-├── config-commented.json
+├── config.example.jsonc
 └── README.md
 ```
 
