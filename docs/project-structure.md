@@ -53,7 +53,7 @@ PluginName/
 ├── PluginName.dll
 ├── PluginInfo.json
 ├── config.json
-├── config.example.jsonc
+├── config说明.json
 ├── README.md
 └── CHANGELOG.md
 ```
@@ -69,12 +69,13 @@ PluginName/
 └── config说明.json
 ```
 
-这种结构对服主更直观，也方便直接复制到 `ArkApi/Plugins/PluginName/`。是否使用 `config/` 子目录不是重点，重点是发布包要自洽：
+这种结构对服主更直观，也方便直接复制到 `ArkApi/Plugins/PluginName/`。是否使用 `config/` 子目录、说明文件叫什么名字都不是重点，重点是发布包要自洽：
 
 - 插件实际读取的位置必须和包内文件一致。
 - `PluginInfo.json` 必须在插件根目录。
 - `config.json` 应该是干净、可被严格 JSON 解析的运行配置。
-- 带注释的配置说明文件只给人看，不要作为运行配置读取；如果里面有 `//` 注释，即使命名为 `.json`，也应按 JSONC/说明文件处理。
+- 配置说明文件通常是复制一份真实配置结构后在字段旁写说明；它只给人看，不要作为运行配置读取。
+- 如果说明文件里有 `//` 注释，即使命名为 `.json`，也不是严格 JSON。
 - 如果包含 `.dll.arkapi`、签名、校验或兼容文件，要在 README 里说明用途。
 
 如果插件配置较复杂，也可以采用：
@@ -84,7 +85,7 @@ PluginName/
 ├── PluginName.dll
 ├── PluginInfo.json
 ├── config.json
-├── config.example.jsonc
+├── CONFIG.zh-CN.md
 └── README.md
 ```
 

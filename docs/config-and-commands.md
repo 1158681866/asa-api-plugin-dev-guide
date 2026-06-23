@@ -25,12 +25,14 @@
 
 ```text
 config.json
-config.example.jsonc
+配置说明文件
 ```
 
 `config.json` 是插件运行时读取的文件，应保持严格 JSON，不写 `//` 注释，避免解析器不兼容。
 
-`config-commented.json`、`config说明.json`、`config.example.jsonc` 或 `CONFIG.zh-CN.md` 是给服主看的说明文件，可以写注释、公式、示例、命令和注意事项。虽然很多插件会把这种说明文件命名成 `.json`，但只要里面有 `//` 注释，它就不是严格 JSON，更接近 JSONC。
+配置说明文件是给服主看的，可以写注释、公式、示例、命令和注意事项。很多插件会把 `config.json` 复制一份，命名成 `config-commented.json`、`config说明.json` 或类似名字，然后在里面直接写说明。这个文件名和 `.json` 后缀不是标准；真正有价值的是它保留了真实配置结构，并在结构旁边解释每个字段怎么改。
+
+只要说明文件里有 `//` 注释，它就不是严格 JSON。插件运行时不应该读取它。
 
 这种分工有几个好处：
 
@@ -47,23 +49,24 @@ config.example.jsonc
 - 修改后是否需要重载或重启。
 - 对应的 RCON / 控制台命令。
 
-命名建议：
+常见命名：
 
-- 最稳妥：`config.json` + `CONFIG.zh-CN.md`
-- 想保留类 JSON 示例：`config.json` + `config.example.jsonc`
-- 兼容常见插件习惯：`config.json` + `config-commented.json` / `config说明.json`
+- `config说明.json`
+- `config-commented.json`
+- `config.example.jsonc`
+- `CONFIG.zh-CN.md`
 
-无论说明文件叫什么，README 里都要写清楚：插件真正读取的是 `config.json`。
+命名可以按服主习惯来，但 README 里要写清楚：插件真正读取的是 `config.json`。
 
 ## 配置说明写法
 
-好的配置说明文件不是只列字段，而是让服主照着就能改。
+好的配置说明文件不是只列字段，而是把真实配置复制成一份可参考的样板，让服主照着就能改。
 
-推荐结构：
+推荐内容标准：
 
 ```text
 1. 文件顶部写插件名、配置文件名、常用命令
-2. 保留一份接近真实配置的 JSONC 示例
+2. 保留一份接近真实 config.json 的配置结构
 3. 每个字段右侧写短注释
 4. 复杂字段后面单独写字段说明
 5. 倍率、概率、时间这类数值写计算公式和示例
