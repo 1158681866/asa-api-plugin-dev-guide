@@ -23,17 +23,18 @@
 
 ## 推荐阅读顺序
 
-1. [开发原则](docs/principles.md)
-2. [环境与 SDK](docs/environment.md)
-3. [项目结构](docs/project-structure.md)
-4. [API 与 Hook 查询](docs/api-lookup.md)
-5. [稳定性红线](docs/stability.md)
-6. [配置与命令](docs/config-and-commands.md)
-7. [通知与聊天](docs/messaging.md)
-8. [测试、编译与打包](docs/build-test-package.md)
-9. [排错手册](docs/debugging.md)
-10. [发布检查清单](docs/release-checklist.md)
-11. [维护规范](docs/maintenance.md)
+1. [使用方式](docs/usage.md)
+2. [开发原则](docs/principles.md)
+3. [环境与 SDK](docs/environment.md)
+4. [项目结构](docs/project-structure.md)
+5. [API 与 Hook 查询](docs/api-lookup.md)
+6. [稳定性红线](docs/stability.md)
+7. [配置与命令](docs/config-and-commands.md)
+8. [通知与聊天](docs/messaging.md)
+9. [测试、编译与打包](docs/build-test-package.md)
+10. [排错手册](docs/debugging.md)
+11. [发布检查清单](docs/release-checklist.md)
+12. [维护规范](docs/maintenance.md)
 
 ## 快速约定
 
@@ -53,6 +54,8 @@
 ## 仓库状态
 
 这是指导项目，可作为新插件开发前的通用参考，也可复制 `templates/plugin-skeleton` 作为新插件起点。
+
+它本身不是服务器插件，也不是自动安装型 Codex skill。如果要让 Codex 自动按这些规则工作，需要另行维护一个 Codex skill；本仓库负责承载完整文档和模板。
 
 ## 维护方式
 

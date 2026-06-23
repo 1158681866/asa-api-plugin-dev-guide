@@ -2,6 +2,7 @@
 
 ## 基础
 
+- [使用方式](usage.md)
 - [开发原则](principles.md)
 - [环境与 SDK](environment.md)
 - [项目结构](project-structure.md)
