@@ -37,8 +37,8 @@ ASA 服务器无法轻松自动化测试。把尽可能多的逻辑放进 `core`
 
 - 配置解析
 - 模式归一化
-- 选择状态
-- 奖励路径转换
+- 状态管理
+- 资源路径转换
 - 文本模板
 - 数值 clamp
 
@@ -52,7 +52,39 @@ ASA 服务器无法轻松自动化测试。把尽可能多的逻辑放进 `core`
 PluginName/
 ├── PluginName.dll
 ├── PluginInfo.json
-├── config/
+├── config.json
+├── config-commented.json
+├── README.md
+└── CHANGELOG.md
+```
+
+很多现有 ASA API 插件会把运行配置直接放在插件根目录，例如：
+
+```text
+PluginName/
+├── PluginName.dll
+├── PluginName.dll.arkapi
+├── PluginInfo.json
+├── config.json
+└── config说明.json
+```
+
+这种结构对服主更直观，也方便直接复制到 `ArkApi/Plugins/PluginName/`。是否使用 `config/` 子目录不是重点，重点是发布包要自洽：
+
+- 插件实际读取的位置必须和包内文件一致。
+- `PluginInfo.json` 必须在插件根目录。
+- `config.json` 应该是干净、可被严格 JSON 解析的运行配置。
+- 带注释的配置说明文件只给人看，不要作为运行配置读取。
+- 如果包含 `.dll.arkapi`、签名、校验或兼容文件，要在 README 里说明用途。
+
+如果插件配置较复杂，也可以采用：
+
+```text
+PluginName/
+├── PluginName.dll
+├── PluginInfo.json
+├── config.json
+├── config-commented.json
 └── README.md
 ```
 
