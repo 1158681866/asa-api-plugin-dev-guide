@@ -19,8 +19,8 @@ rg -n "GetNativePointerField|Field\\(\\)" <sdk>
 
 ## Hook 规则
 
-- 声明 Hook 前必须确认原生函数名和参数类型。
-- 优先选择能直接提供目标 actor / object 的 Hook。
+- 声明 Hook 前确认原生函数名和参数类型，并记录来源。
+- 如果 Hook 能直接提供目标 actor / object，通常先评估是否满足需求。
 - 全局脚本派发、高频事件路径这类宽泛 Hook 需要说明业务必要性、触发频率和验证方式。
 - 插件加载时如果在 `Offsets::GetAddress` / `SetHookInternal` 崩溃，通常是 Hook 签名或 SDK/服务器版本不匹配。
 

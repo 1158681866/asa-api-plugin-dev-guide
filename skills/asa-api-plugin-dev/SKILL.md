@@ -41,7 +41,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 
 1. 阅读插件结构：源码、核心配置、测试、文档、打包脚本。
 2. 在本地头文件或 wiki 中确认相关 API 符号。
-3. 做最小且稳定的代码/配置/文档/测试改动。
+3. 做范围清晰、可验证、可回滚的代码/配置/文档/测试改动。
 4. 编译 Release。优先使用项目现有构建方式；Windows 常见方式是 MSBuild，参数为 `Configuration=Release`、`Platform=x64`。
 5. 运行已有单元测试或 core tests。
 6. 如果有打包脚本，执行打包脚本。

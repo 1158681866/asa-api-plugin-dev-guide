@@ -37,7 +37,7 @@ Wiki 是 API 索引，不是完整插件开发教程。写文档时要区分：
 
 ## Hook 接入规则
 
-Hook 前必须确认：
+Hook 前需要确认并记录来源：
 
 - 原生函数完整名字
 - 参数数量
@@ -46,7 +46,7 @@ Hook 前必须确认：
 - 是否有 `_Implementation`
 - 是否存在于当前 SDK/服务器版本
 
-推荐写法：
+常见写法：
 
 ```cpp
 DECLARE_HOOK(SomeHook, ReturnType, ClassType*, Arg1Type, Arg2Type);
