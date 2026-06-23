@@ -54,7 +54,7 @@ DECLARE_HOOK(SomeHook, ReturnType, ClassType*, Arg1Type, Arg2Type);
 
 注册失败时，不要硬试。先回头查签名。
 
-## 选 Hook 的优先级
+## 选 Hook 的评估顺序
 
 1. 明确业务事件 Hook
 2. 直接传入目标对象的 Hook
@@ -63,4 +63,4 @@ DECLARE_HOOK(SomeHook, ReturnType, ClassType*, Arg1Type, Arg2Type);
 5. 定时扫描
 6. 高频全局 Hook
 
-越靠后风险越高。
+这个顺序不是硬标准，只是常见评估方向。越靠后通常越需要说明触发频率、范围限制、性能成本和验证方式。
