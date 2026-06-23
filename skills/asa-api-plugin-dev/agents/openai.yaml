@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASA API 插件开发"
+  short_description: "开发、排错、审查和打包 ASA AsaApi C++ 插件。"
+  default_prompt: "使用这个技能创建、修改、审查、排错、测试并打包 Ark Survival Ascended AsaApi 插件。"

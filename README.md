@@ -24,17 +24,18 @@
 ## 推荐阅读顺序
 
 1. [使用方式](docs/usage.md)
-2. [开发原则](docs/principles.md)
-3. [环境与 SDK](docs/environment.md)
-4. [项目结构](docs/project-structure.md)
-5. [API 与 Hook 查询](docs/api-lookup.md)
-6. [稳定性红线](docs/stability.md)
-7. [配置与命令](docs/config-and-commands.md)
-8. [通知与聊天](docs/messaging.md)
-9. [测试、编译与打包](docs/build-test-package.md)
-10. [排错手册](docs/debugging.md)
-11. [发布检查清单](docs/release-checklist.md)
-12. [维护规范](docs/maintenance.md)
+2. [Agent 使用](docs/agent-usage.md)
+3. [开发原则](docs/principles.md)
+4. [环境与 SDK](docs/environment.md)
+5. [项目结构](docs/project-structure.md)
+6. [API 与 Hook 查询](docs/api-lookup.md)
+7. [稳定性红线](docs/stability.md)
+8. [配置与命令](docs/config-and-commands.md)
+9. [通知与聊天](docs/messaging.md)
+10. [测试、编译与打包](docs/build-test-package.md)
+11. [排错手册](docs/debugging.md)
+12. [发布检查清单](docs/release-checklist.md)
+13. [维护规范](docs/maintenance.md)
 
 ## 快速约定
 
@@ -55,7 +56,7 @@
 
 这是指导项目，可作为新插件开发前的通用参考，也可复制 `templates/plugin-skeleton` 作为新插件起点。
 
-它本身不是服务器插件，也不是自动安装型 Codex skill。如果要让 Codex 自动按这些规则工作，需要另行维护一个 Codex skill；本仓库负责承载完整文档和模板。
+它本身不是服务器插件。仓库内置 Codex skill：`skills/asa-api-plugin-dev`，可用 `scripts/install-skill.ps1` 安装到本机 Codex。Codex、Claude Code 等 Agent 也可以直接读取 `AGENTS.md` / `CLAUDE.md`；本仓库负责承载完整文档、模板和 Agent 规则。
 
 ## 维护方式
 
