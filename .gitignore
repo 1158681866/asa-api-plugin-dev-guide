@@ -1,0 +1,15 @@
+build/
+out/
+*.user
+*.suo
+*.VC.db
+*.VC.VC.opendb
+*.pdb
+*.obj
+*.ilk
+*.exp
+*.lib
+*.dll
+*.zip
+*.log
+crashcallstack.txt
