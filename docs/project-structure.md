@@ -19,8 +19,7 @@ plugin-name/
 │   └── package/
 ├── PluginInfo.json
 ├── package.ps1
-├── README.md
-└── CONFIG.zh-CN.md
+└── README.md
 ```
 
 ## 分层建议
@@ -85,7 +84,7 @@ PluginName/
 ├── PluginName.dll
 ├── PluginInfo.json
 ├── config.json
-├── CONFIG.zh-CN.md
+├── config-commented.json
 └── README.md
 ```
 

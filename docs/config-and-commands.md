@@ -53,8 +53,6 @@ config.json
 
 - `config说明.json`
 - `config-commented.json`
-- `config.example.jsonc`
-- `CONFIG.zh-CN.md`
 
 命名可以按服主习惯来，但 README 里要写清楚：插件真正读取的是 `config.json`。
 
