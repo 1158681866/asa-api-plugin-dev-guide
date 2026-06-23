@@ -27,6 +27,14 @@ https://arkserverapi.wiki/asa/index.html
 
 注意：wiki 不是最终编译依据。写代码前仍要看本地 SDK。
 
+Wiki 是 API 索引，不是完整插件开发教程。写文档时要区分：
+
+- API 事实：wiki / SDK 能确认。
+- 工程建议：需要结合插件场景和实测。
+- 项目经验：不能直接写成通用标准。
+
+详细见：[官方 API 来源与经验边界](official-api-sources.md)。
+
 ## Hook 接入规则
 
 Hook 前必须确认：

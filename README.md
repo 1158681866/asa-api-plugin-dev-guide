@@ -2,7 +2,7 @@
 
 面向 Ark Survival Ascended 的 AsaApi / ArkServerApi C++ 插件开发指导项目。
 
-这个仓库不是某一个插件的说明书，而是一套通用开发规范、排错流程、稳定性红线和项目模板。目标是让 ASA API 插件从“能编译”走向“能上服、能排错、能维护、能发布”。
+这个仓库不是某一个插件的说明书，而是一套通用开发规范、排错流程、稳定性建议和项目模板。目标是让 ASA API 插件从“能编译”走向“能上服、能排错、能维护、能发布”。
 
 ## 适用范围
 
@@ -28,18 +28,20 @@
 3. [开发原则](docs/principles.md)
 4. [环境与 SDK](docs/environment.md)
 5. [项目结构](docs/project-structure.md)
-6. [API 与 Hook 查询](docs/api-lookup.md)
-7. [稳定性红线](docs/stability.md)
-8. [配置与命令](docs/config-and-commands.md)
-9. [通知与聊天](docs/messaging.md)
-10. [测试、编译与打包](docs/build-test-package.md)
-11. [排错手册](docs/debugging.md)
-12. [发布检查清单](docs/release-checklist.md)
-13. [维护规范](docs/maintenance.md)
+6. [官方 API 来源与经验边界](docs/official-api-sources.md)
+7. [API 与 Hook 查询](docs/api-lookup.md)
+8. [稳定性建议](docs/stability.md)
+9. [配置与命令](docs/config-and-commands.md)
+10. [通知与聊天](docs/messaging.md)
+11. [测试、编译与打包](docs/build-test-package.md)
+12. [排错手册](docs/debugging.md)
+13. [发布检查清单](docs/release-checklist.md)
+14. [维护规范](docs/maintenance.md)
 
 ## 快速约定
 
 - 先查本地 SDK 头文件，再查 wiki。
+- 区分 API 事实、社区常见结构和工程建议。
 - 不猜 Hook 签名。
 - 不把大范围扫描当默认方案。
 - 不把高频全局 Hook 当默认方案。

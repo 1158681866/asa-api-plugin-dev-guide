@@ -6,6 +6,7 @@
 - [Agent 使用](agent-usage.md)
 - [开发原则](principles.md)
 - [环境与 SDK](environment.md)
+- [官方 API 来源与经验边界](official-api-sources.md)
 - [项目结构](project-structure.md)
 
 ## 开发
@@ -16,7 +17,7 @@
 
 ## 稳定与排错
 
-- [稳定性红线](stability.md)
+- [稳定性建议](stability.md)
 - [排错手册](debugging.md)
 
 ## 发布

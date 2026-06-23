@@ -22,12 +22,14 @@
 4. 搜索符号、Hook、配置字段、崩溃关键字、旧逻辑时优先用 `rg`。
 5. 每个引擎/API 符号先查本地 AsaApi 头文件；本地没有或不确定时，再查 ASA API Wiki。
 6. 不猜 Hook 签名、不猜字段名。
+7. 区分 API 事实、社区常见结构和工程建议；不要把具体插件事故写成通用规则。
 
 ## 必读文档
 
 按任务类型读取对应文档，不要一次性把所有内容塞进上下文。
 
 - 新项目/结构设计：`docs/project-structure.md`
+- 官方/API 来源边界：`docs/official-api-sources.md`
 - API / Hook 查询：`docs/api-lookup.md`
 - 配置和命令：`docs/config-and-commands.md`
 - 通知和聊天：`docs/messaging.md`

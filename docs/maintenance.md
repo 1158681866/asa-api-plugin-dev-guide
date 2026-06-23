@@ -42,7 +42,7 @@
 
 - 文档结构变化：更新 `docs/README.md`。
 - 新增发布要求：更新 `docs/release-checklist.md`。
-- 新增稳定性红线：更新 `docs/stability.md` 和 `docs/debugging.md`。
+- 新增稳定性建议：更新 `docs/stability.md` 和 `docs/debugging.md`。
 - 新增默认项目结构：更新 `docs/project-structure.md` 和模板说明。
 
 ## GitHub 私有项目建议

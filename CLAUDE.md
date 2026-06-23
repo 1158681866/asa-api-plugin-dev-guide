@@ -8,6 +8,7 @@ This repository is not a server plugin and not a buildable plugin by itself. It 
 
 - Read existing plugin code before making changes.
 - Verify every Hook signature, field, wrapper, and native call against the local AsaApi SDK or existing project code.
+- Separate API facts from engineering advice and project-specific experience.
 - Use `rg` for searches.
 - Prefer event-driven Hooks and objects passed directly by Hook parameters.
 - Avoid unbounded scans, high-frequency global Hooks, noisy logs, and broad script-dispatch Hooks unless explicitly justified.
@@ -19,6 +20,7 @@ This repository is not a server plugin and not a buildable plugin by itself. It 
 Read only the docs relevant to the task:
 
 - `docs/api-lookup.md` for SDK and Hook lookup.
+- `docs/official-api-sources.md` for source boundaries.
 - `docs/stability.md` for risk boundaries.
 - `docs/config-and-commands.md` for config and command conventions.
 - `docs/messaging.md` for player-facing messages.

@@ -15,13 +15,15 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 4. 不猜 Hook 签名、不猜字段名。必须 grep 本地头文件确认原生函数、封装函数或字段。
 5. 行为改动要同步更新代码、默认配置、测试、包内文件和文档。
 6. 完成后编译、跑已有测试、打包，并报告产物路径和 DLL 时间。
+7. 区分 API 事实、社区常见结构和工程建议；不要把具体插件排错经验写成通用规则。
 
 ## 按需读取参考
 
 只打开当前任务需要的参考文件：
 
 - `references/api-lookup.md`：SDK / wiki 查询、Hook 签名确认。
-- `references/stability.md`：崩服/无响应风险红线和稳定写法。
+- `references/official-api-sources.md`：区分 API 事实、社区常见结构和工程建议。
+- `references/stability.md`：崩服/无响应风险建议和稳定写法。
 - `references/messaging.md`：聊天、服务器消息、屏幕通知接口区别。
 - `references/config-and-packaging.md`：配置、测试、MSBuild、打包检查。
 - `references/debugging.md`：崩溃日志、无 crash 无响应、阶段日志、远程服务器排错。
