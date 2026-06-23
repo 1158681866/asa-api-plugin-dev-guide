@@ -17,7 +17,7 @@
 - CMake 配置
 - README 或构建脚本
 - 环境变量
-- 用户提供的路径
+- 服务器管理员或项目文档提供的路径
 
 常见搜索：
 
@@ -48,6 +48,6 @@ API::Hooks::SetHookInternal()
 1. 本地 SDK 头文件
 2. ASA API Wiki
 3. GitHub 源码
-4. 论坛/Discord 经验
+4. 论坛/Discord 讨论
 
 写代码以前，最终仍以本地 SDK 能否编译为准。

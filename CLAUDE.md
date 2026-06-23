@@ -10,8 +10,8 @@ This repository is not a server plugin and not a buildable plugin by itself. It 
 - Verify every Hook signature, field, wrapper, and native call against the local AsaApi SDK or existing project code.
 - Separate API facts from engineering advice and project-specific experience.
 - Use `rg` for searches.
-- Prefer event-driven Hooks and objects passed directly by Hook parameters.
-- Avoid unbounded scans, high-frequency global Hooks, noisy logs, and broad script-dispatch Hooks unless explicitly justified.
+- Evaluate event Hooks, timers, scans, direct object fields, native calls, and global Hooks by business need, frequency, scope, observability, and rollback path.
+- Avoid presenting project-specific incidents or unverified assumptions as general ASA API rules.
 - Keep changes scoped and update code, config, tests, docs, and package output together.
 - If the server is not local, do not claim server-side validation. Report local build/test/package results and list what must be checked on the server.
 
@@ -20,6 +20,7 @@ This repository is not a server plugin and not a buildable plugin by itself. It 
 Read only the docs relevant to the task:
 
 - `docs/api-lookup.md` for SDK and Hook lookup.
+- `docs/development-workflow.md` for implementation flow.
 - `docs/official-api-sources.md` for source boundaries.
 - `docs/stability.md` for risk boundaries.
 - `docs/config-and-commands.md` for config and command conventions.

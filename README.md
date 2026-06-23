@@ -2,7 +2,7 @@
 
 面向 Ark Survival Ascended 的 AsaApi / ArkServerApi C++ 插件开发指导项目。
 
-这个仓库不是某一个插件的说明书，而是一套通用开发规范、排错流程、稳定性建议和项目模板。目标是让 ASA API 插件从“能编译”走向“能上服、能排错、能维护、能发布”。
+这个仓库不是某一个插件的说明书，而是一套面向 ASA API 插件的开发手册、Agent 指令、检查清单和项目模板。目标是让插件从“能编译”走向“可验证、可排错、可发布、可维护”。
 
 ## 适用范围
 
@@ -19,29 +19,29 @@
 - UE Mod 蓝图开发
 - 非 AsaApi 的独立服务端程序
 - 未经验证的内存偏移硬改
-- 未说明依据和验证方式的经验性结论
+- 未说明依据和验证方式的结论
 
 ## 推荐阅读顺序
 
 1. [使用方式](docs/usage.md)
 2. [Agent 使用](docs/agent-usage.md)
 3. [开发原则](docs/principles.md)
-4. [环境与 SDK](docs/environment.md)
-5. [项目结构](docs/project-structure.md)
-6. [官方 API 来源与经验边界](docs/official-api-sources.md)
-7. [API 与 Hook 查询](docs/api-lookup.md)
-8. [稳定性建议](docs/stability.md)
-9. [配置与命令](docs/config-and-commands.md)
-10. [通知与聊天](docs/messaging.md)
-11. [测试、编译与打包](docs/build-test-package.md)
-12. [排错手册](docs/debugging.md)
-13. [发布检查清单](docs/release-checklist.md)
-14. [维护规范](docs/maintenance.md)
+4. [开发流程](docs/development-workflow.md)
+5. [环境与 SDK](docs/environment.md)
+6. [项目结构](docs/project-structure.md)
+7. [API 来源与结论分级](docs/official-api-sources.md)
+8. [API 与 Hook 查询](docs/api-lookup.md)
+9. [稳定性建议](docs/stability.md)
+10. [配置与命令](docs/config-and-commands.md)
+11. [通知与聊天](docs/messaging.md)
+12. [测试、编译与打包](docs/build-test-package.md)
+13. [排错手册](docs/debugging.md)
+14. [发布检查清单](docs/release-checklist.md)
 
 ## 快速约定
 
 - API 名称、Hook 签名、字段名优先以当前项目使用的本地 SDK 为准；wiki 可作为检索和交叉确认来源。
-- 区分 API 事实、社区常见结构和工程建议。
+- 区分 API 事实、社区常见结构和工程判断。
 - 不确定的 Hook 签名、字段名、调用链必须标记为“待确认”，不要写成确定结论。
 - 大范围扫描、高频 Hook、脚本/同步调用不是一概不能用；使用前要说明业务必要性、触发频率、范围限制和验证方式。
 - 任何行为变更都同步更新：代码、配置、测试、文档、包目录。
@@ -62,5 +62,5 @@
 
 - 用 issue 记录排错和文档补充。
 - 用 PR 记录结构化修改。
-- 新增经验时优先更新已有专题文档，避免重复散落。
-- 私有仓库也按可发布标准管理，不提交 token、密码、服务器私密地址或未脱敏日志。
+- 新增结论时优先更新已有专题文档，避免重复散落。
+- 不提交 token、密码、服务器私密地址或未脱敏日志。

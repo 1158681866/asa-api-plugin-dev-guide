@@ -1,6 +1,6 @@
 # 项目结构
 
-推荐结构：
+推荐源码结构：
 
 ```text
 plugin-name/
@@ -43,7 +43,7 @@ ASA 服务器无法轻松自动化测试。把尽可能多的逻辑放进 `core`
 
 游戏对象、Hook 和 native call 留在 `plugin` 层。
 
-## 打包目录
+## 发布包目录
 
 包目录应该是服务器可直接复制的结构：
 
@@ -68,7 +68,7 @@ PluginName/
 └── config说明.json
 ```
 
-这种结构对服主更直观，也方便直接复制到 `ArkApi/Plugins/PluginName/`。是否使用 `config/` 子目录、说明文件叫什么名字都不是重点，重点是发布包要自洽：
+这种结构对服务器管理员更直观，也方便直接复制到 `ArkApi/Plugins/PluginName/`。是否使用 `config/` 子目录、说明文件叫什么名字都不是重点，重点是发布包要自洽：
 
 - 插件实际读取的位置必须和包内文件一致。
 - `PluginInfo.json` 必须在插件根目录。

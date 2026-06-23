@@ -7,7 +7,7 @@
 1. 先从项目文件里找 SDK include / lib 路径。
 2. 用 `rg` 搜本地 AsaApi SDK 头文件。
 3. 再查 ASA API wiki：`https://arkserverapi.wiki/asa/index.html`。
-4. 如果本地 SDK 和 wiki 不一致，编译以本地 SDK 为准，并把差异告诉用户。
+4. 如果本地 SDK 和 wiki 不一致，编译以本地 SDK 为准，并在交付说明里标出差异。
 
 ## 常用搜索
 
