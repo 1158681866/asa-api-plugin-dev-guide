@@ -27,3 +27,4 @@
 - [发布检查清单](release-checklist.md)
 - [版本策略](versioning.md)
 - [维护规范](maintenance.md)
+- [指南迭代](skill-evolution.md)

@@ -36,7 +36,8 @@
 11. [通知与聊天](docs/messaging.md)
 12. [测试、编译与打包](docs/build-test-package.md)
 13. [排错手册](docs/debugging.md)
-14. [发布检查清单](docs/release-checklist.md)
+14. [指南迭代](docs/skill-evolution.md)
+15. [发布检查清单](docs/release-checklist.md)
 
 ## 快速约定
 
@@ -63,4 +64,5 @@
 - 用 issue 记录排错和文档补充。
 - 用 PR 记录结构化修改。
 - 新增结论时优先更新已有专题文档，避免重复散落。
+- 来自具体项目的经验要先抽象成通用流程、风险判断或验证步骤，再写入指南。
 - 不提交 token、密码、服务器私密地址或未脱敏日志。
