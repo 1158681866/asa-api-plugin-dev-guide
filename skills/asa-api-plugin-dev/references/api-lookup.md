@@ -15,7 +15,17 @@
 rg -n "DECLARE_HOOK|SetHook|FunctionName" <sdk-or-project>
 rg -n "ClientServerChatDirectMessage|SendServerMessage|SendChatMessage|SendNotification" <sdk>
 rg -n "GetNativePointerField|Field\\(\\)" <sdk>
+rg -n "ToStringUTF8|FromStringUTF8|TCHAR_TO_UTF8|TCHAR_TO_ANSI" <sdk-or-project>
 ```
+
+## 字符串编码
+
+处理玩家输入、中文配置、玩家名、聊天消息、RCON 回复时，先确认 `FString` 与 `std::string` 的编码转换方式。
+
+- 需要保留中文或其他非 ASCII 字符时，优先使用 SDK 中的 UTF-8 转换，例如 `FString::ToStringUTF8()`、`FString::FromStringUTF8()` 或 `TCHAR_TO_UTF8`。
+- `FString::ToString()` 在部分 SDK 封装中可能走 ANSI 转换，适合纯英文标识，不适合玩家输入、中文别名、中文显示名。
+- 如果命令支持中文参数，要给 core tests 或手动测试覆盖中文别名、中文玩家名、中文配置读取。
+- 日志输出、游戏内聊天、配置解析可能分别需要不同编码处理；不要用“能编译”代替“游戏内显示正确”。
 
 ## Hook 规则
 

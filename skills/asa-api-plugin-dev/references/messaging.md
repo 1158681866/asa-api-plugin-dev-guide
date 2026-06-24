@@ -4,19 +4,21 @@
 
 ## 常见接口
 
-- `SendChatMessage(player, sender_name, msg)`：普通聊天行，有发送者名，通常没有单独颜色参数。
+- `SendChatMessage(player, sender_name, msg)`：普通聊天行，有发送者名，通常没有单独颜色参数；如果需要简单颜色，可评估消息正文是否支持游戏富文本标签。
 - `SendServerMessage(player, color, msg)`：服务器/直发聊天样式，有颜色，发送者通常偏服务器消息。
 - `SendNotification(player, color, scale, time, icon, msg)`：屏幕通知，不是聊天框历史里的普通消息行。
-- `ClientServerChatDirectMessage(&message, color, bold, &sender)`：直发聊天行，有发送者名，也有颜色。适合插件样式的彩色聊天提示。
+- `ClientServerChatDirectMessage(&message, color, bold, &sender)`：直发聊天行，有发送者名，也有颜色；实际显示样式可能接近服务器直发消息，需要在目标服务器里截图确认。
 
 所有接口写代码前都要在本地 SDK 头文件里核对签名。
 
 ## 实用选择
 
-- 想要“发送者：内容”且能改颜色：用 `ClientServerChatDirectMessage`。
-- 想要普通插件聊天行且不需要颜色：用 `SendChatMessage`。
+- 想要普通“发送者：内容”聊天行：优先评估 `SendChatMessage`。
+- 想要普通聊天行且需要颜色：先验证正文富文本标签是否满足需求，再考虑直发接口。
+- 想要有颜色的直发/服务器样式消息：评估 `SendServerMessage` 或 `ClientServerChatDirectMessage`。
 - 想要屏幕上方/中间的浮动提示：用 `SendNotification`。
-- 想要服务器彩色消息：用 `SendServerMessage`。
+
+接口名字和参数不能完全代表游戏内样式。发布前至少用目标服务器验证一次：聊天框前缀、发送者名、颜色、换行、历史记录、屏幕通知位置是否符合预期。
 
 ## 安全性
 

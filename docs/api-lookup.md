@@ -8,7 +8,17 @@
 rg -n "DECLARE_HOOK|SetHook|<FunctionName>" <sdk-or-project>
 rg -n "ClientServerChatDirectMessage|SendChatMessage|SendServerMessage|SendNotification" <sdk>
 rg -n "GetNativePointerField|Field\\(\\)" <sdk>
+rg -n "ToStringUTF8|FromStringUTF8|TCHAR_TO_UTF8|TCHAR_TO_ANSI" <sdk-or-project>
 ```
+
+## FString 与中文
+
+玩家命令、中文别名、中文配置、玩家名和游戏内提示都要确认字符串编码。
+
+- 需要保留中文时，优先使用 UTF-8 转换，例如 `FString::ToStringUTF8()`、`FString::FromStringUTF8()` 或 `TCHAR_TO_UTF8`。
+- `FString::ToString()` 在部分 SDK 封装中可能走 ANSI 转换，容易把中文变成 `?` 或导致中文命令匹配失败。
+- 如果插件支持中文命令或中文显示名，测试里要覆盖中文参数、中文配置读取和游戏内显示。
+- 日志能正常输出，不代表游戏内聊天、RCON、配置读取都正常；它们可能走不同转换链。
 
 ## Wiki
 
