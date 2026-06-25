@@ -98,6 +98,12 @@ git pull
 
 提交并推送当前仓库改动：
 
+```text
+双击 push.cmd
+```
+
+需要自定义提交信息时：
+
 ```powershell
 .\scripts\push.ps1 -Message "docs: update guide"
 ```

@@ -290,7 +290,11 @@ chore/xxx     仓库维护
 
 ## 一键推送
 
-维护本仓库时，可以用脚本安装本地 skill、提交并推送当前改动：
+最简单方式：双击仓库根目录的 `push.cmd`。
+
+它会安装本地 skill、提交并推送当前改动。默认提交信息是 `docs: update asa api plugin guide`。
+
+需要自定义提交信息时，可以用脚本：
 
 ```powershell
 .\scripts\push.ps1 -Message "docs: update guide"
