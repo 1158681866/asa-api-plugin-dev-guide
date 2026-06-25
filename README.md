@@ -132,7 +132,7 @@ plugin-name/
 ├── config.json
 ├── config说明.json
 ├── package.ps1
-└── README.md
+└── README.md        # 可选
 ```
 
 核心思路：
@@ -152,7 +152,7 @@ PluginName/
 ├── PluginInfo.json
 ├── config.json
 ├── config说明.json
-├── README.md
+├── README.md        # 可选
 └── CHANGELOG.md
 ```
 
@@ -160,7 +160,8 @@ PluginName/
 
 - `PluginInfo.json` 放在插件根目录。
 - `config.json` 是插件运行时读取的严格 JSON，不写 `//` 注释。
-- `config说明.json` / `config-commented.json` / README / wiki 只给人看，可以解释字段、倍率、概率、重载命令和注意事项。
+- `config说明.json` 是必需的中文配置说明文件，只给人看，可以解释字段、倍率、概率、重载命令和注意事项。
+- `README.md` 可选，适合写项目总览、安装和排错入口。
 - 如果说明文件里有 `//` 注释，即使命名为 `.json`，也不是严格 JSON，插件运行时不应读取它。
 - 每次打包后检查 DLL 时间，避免误拷旧包。
 
@@ -286,6 +287,20 @@ chore/xxx     仓库维护
 - 如果改了 docs，也同步考虑 `skills/asa-api-plugin-dev/references/` 是否需要更新。
 
 更多规则见 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [docs/maintenance.md](docs/maintenance.md)。
+
+## 一键推送
+
+维护本仓库时，可以用脚本安装本地 skill、提交并推送当前改动：
+
+```powershell
+.\scripts\push.ps1 -Message "docs: update guide"
+```
+
+如果只想提交并推送，不同步安装到本机 Codex skills：
+
+```powershell
+.\scripts\push.ps1 -Message "docs: update guide" -NoInstall
+```
 
 ## 指南迭代规则
 
