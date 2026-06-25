@@ -96,22 +96,4 @@ CLAUDE.md
 git pull
 ```
 
-提交并推送当前仓库改动：
-
-```text
-双击 push.cmd
-```
-
-需要自定义提交信息时：
-
-```powershell
-.\scripts\push.ps1 -Message "docs: update guide"
-```
-
-默认会先把仓库内置 skill 安装到当前用户的 Codex skills 目录，再提交并推送。只想推送仓库、不安装本地 skill 时：
-
-```powershell
-.\scripts\push.ps1 -Message "docs: update guide" -NoInstall
-```
-
 新增结论时优先更新已有专题文档。无法从 SDK、wiki 或可复现实测确认的内容，应标记为建议或待验证。

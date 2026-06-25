@@ -288,24 +288,6 @@ chore/xxx     仓库维护
 
 更多规则见 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [docs/maintenance.md](docs/maintenance.md)。
 
-## 一键推送
-
-最简单方式：双击仓库根目录的 `push.cmd`。
-
-它会安装本地 skill、提交并推送当前改动。默认提交信息是 `docs: update asa api plugin guide`。
-
-需要自定义提交信息时，可以用脚本：
-
-```powershell
-.\scripts\push.ps1 -Message "docs: update guide"
-```
-
-如果只想提交并推送，不同步安装到本机 Codex skills：
-
-```powershell
-.\scripts\push.ps1 -Message "docs: update guide" -NoInstall
-```
-
 ## 指南迭代规则
 
 这个仓库会吸收实际开发经验，但只吸收“通用化后的经验”。
