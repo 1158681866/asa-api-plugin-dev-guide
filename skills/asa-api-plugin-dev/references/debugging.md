@@ -39,3 +39,31 @@
 3. 复测同一个动作。
 4. 恢复后再关下一个嫌疑点。
 5. 最后只保留稳定的最小路径。
+
+## HTTP/JSON 外部数据解析
+
+插件从 Web API、远程服务或本地配置以外的 JSON 获取任务、奖励、玩家信息时，要把返回内容视为不可信外部数据：
+
+- 字符串字段可能缺失，也可能存在但值为 `null`，不要直接假设能按字符串读取。
+- 数字、布尔、数组和对象字段也要检查类型；错误类型要给出可定位日志，而不是让异常直接中断整批处理。
+- 建议封装 `StringOrEmpty`、`IntOrDefault`、`BoolOrDefault` 这类安全读取函数，用于任务号、玩家 id、服务器标识、蓝图路径、动作类型等字段。
+- 批量处理任务时，单条任务解析失败应尽量记录 `jobNo/actionType/playerKey/eosId` 等上下文并跳过或回写失败，不要让一条脏数据影响整轮轮询。
+- 如果日志出现 `json.exception.type_error`、`type must be string, but is null` 这类错误，优先检查后端返回里是否有可空字段或字段类型变化。
+
+## GiveItem 发物品排错
+
+使用 `AShooterPlayerController::GiveItem` 发物品时，先用目标服务器已经验证过的蓝图格式测试，优先参考同服 ArkShop、礼包插件或已有配置中的 `Blueprint` 字段。
+
+- 不要默认短类名可用，例如 `PrimalItemResource_Stone_C` 可能找得到玩家但 `GiveItem` 返回失败。
+- ASA/ArkServerApi 常见可用格式是完整蓝图路径，例如 `Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Stone.PrimalItemResource_Stone'`。
+- 如果日志已经过了玩家查找阶段，但出现 `GiveItem failed: <blueprint>`，优先检查蓝图路径格式，而不是继续查网络、token 或在线玩家。
+- 如果奖励任务从后端生成，要注意任务表里的 `payload_json` 往往是奖励配置的快照；只改奖励模板不一定会影响已经创建的待发任务。
+
+## 日志中文编码
+
+ASA 插件日志、控制台、PowerShell、Windows 区域设置和源码编码可能不一致。出现中文乱码时，先判断是显示/编码问题还是业务逻辑问题：
+
+- 插件内部日志尽量使用 ASCII 英文关键日志，尤其是排错阶段的状态、错误原因、任务号、玩家 id、蓝图路径。
+- 玩家可见文本、配置说明和后台文案可以用中文；服务器控制台排错日志不建议依赖中文。
+- 如果必须输出中文日志，确认源码保存为 UTF-8、编译器输入编码、控制台代码页和日志查看器编码一致；否则同一条日志在控制台和文件里可能表现不同。
+- 第三方插件中文乱码通常不代表本插件异常；先按日志前缀区分来源。

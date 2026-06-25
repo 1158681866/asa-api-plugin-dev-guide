@@ -31,3 +31,13 @@
 - 是否写清楚来源、验证方式或适用条件。
 - 是否没有把社区常见结构写成官方标准。
 - 是否没有泄露私有路径、服务器信息或未脱敏日志。
+
+## 同步规则
+
+如果一次排错或开发结论达到了更新 skill 的程度，不要只修改本机已安装的 Codex skill，还要同步修改本指南仓库中的来源文件：
+
+- `skills/asa-api-plugin-dev/SKILL.md`
+- `skills/asa-api-plugin-dev/references/*.md`
+- 需要面向人阅读时，同步更新 `docs/*.md`
+
+本机 `C:\Users\<User>\.codex\skills\asa-api-plugin-dev` 只是安装后的副本；长期维护应以 `asa-api-plugin-dev-guide` 仓库为准。完成后检查 git diff，必要时提交并推送到远程仓库。

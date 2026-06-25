@@ -56,3 +56,55 @@
 ## 判断是否加载旧包
 
 如果日志仍出现已删除的旧文案或旧阶段名，优先怀疑服务器没有换到新 DLL。
+
+## HTTP/JSON 外部数据解析
+
+插件从 Web API、远程服务或本地配置以外的 JSON 获取任务、奖励、玩家信息时，把返回内容视为不可信外部数据。
+
+常见问题：
+
+- 字符串字段缺失。
+- 字符串字段存在但值是 `null`。
+- 数字、布尔、数组、对象字段类型和预期不一致。
+- 单条脏任务导致整轮轮询中断。
+
+建议做法：
+
+- 封装 `StringOrEmpty`、`IntOrDefault`、`BoolOrDefault` 这类安全读取函数。
+- 解析失败时记录任务号、玩家 id、EOS、动作类型、服务器标识等上下文。
+- 批量处理时尽量跳过或回写单条失败，不要让一条坏数据影响整批任务。
+- 如果日志出现 `json.exception.type_error` 或 `type must be string, but is null`，优先检查后端返回是否有可空字段或字段类型变化。
+
+## GiveItem 发物品失败
+
+`AShooterPlayerController::GiveItem` 能找到玩家但返回失败时，优先检查蓝图路径格式。
+
+不建议默认使用短类名：
+
+```text
+PrimalItemResource_Stone_C
+```
+
+优先使用目标服务器同服 ArkShop、礼包插件或已有配置验证过的完整蓝图路径，例如：
+
+```text
+Blueprint'/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Stone.PrimalItemResource_Stone'
+```
+
+排查顺序：
+
+1. 日志是否已经进入发物品阶段，而不是找不到玩家。
+2. `GiveItem failed: <blueprint>` 中的 `<blueprint>` 是否为完整路径。
+3. `quantity`、`quality`、`forceBlueprint` 是否符合预期。
+4. 如果任务来自后端队列，确认任务表里的 `payload_json`，不要只改奖励模板。很多系统会在创建任务时保存奖励配置快照。
+
+## 中文日志乱码
+
+ASA 插件日志、Windows 控制台、PowerShell、源码文件编码、编译器输入编码、日志查看器编码可能不一致。中文乱码通常是显示/编码问题，不一定是业务逻辑问题。
+
+建议：
+
+- 插件内部排错日志使用 ASCII 英文关键字，尤其是状态、错误原因、任务号、玩家 id、蓝图路径。
+- 玩家可见文案、配置说明、后台文档可以保留中文。
+- 必须输出中文日志时，确认源码 UTF-8、编译参数、控制台代码页和日志查看器编码一致。
+- 第三方插件日志乱码时，先看日志前缀区分来源，不要误判为当前插件异常。
