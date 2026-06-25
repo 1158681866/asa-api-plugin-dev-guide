@@ -47,8 +47,16 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 4. 编译 Release。优先使用项目现有构建方式；Windows 常见方式是 MSBuild，参数为 `Configuration=Release`、`Platform=x64`。
 5. 运行已有单元测试或 core tests。
 6. 如果有打包脚本，执行打包脚本。
-7. 检查包目录里是否有 DLL、`PluginInfo.json`、配置和项目要求的文档。
+7. 检查包目录里是否有 DLL、`PluginInfo.json`、`config.json`、`config说明.json`。`README.md` 可选，`CONFIG.zh-CN.md` 不作为统一标准项。
 8. 交付时说明改了什么、怎么验证、包目录、DLL 时间，以及服务器上还需要测试什么。
+
+## 发布包文档标准
+
+- `PluginInfo.json`：保持原标准，仍然必需。
+- `config.json`：保持严格 JSON。
+- `config说明.json`：必需的中文配置说明文件。
+- `README.md`：可选，保留给项目自己的总览和安装说明。
+- `CONFIG.zh-CN.md`：不作为统一标准项，只在项目自己需要时保留。
 
 ## 设计倾向
 

@@ -44,7 +44,9 @@
 - DLL 时间
 - 包内配置
 - `PluginInfo.json`
-- README / 中文配置说明
+- `config.json`
+- `config说明.json`
+- `README.md` 可选；如存在，要和当前行为一致
 - zip 是否更新
 
 ## 交付信息

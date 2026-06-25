@@ -19,7 +19,8 @@ plugin-name/
 │   └── package/
 ├── PluginInfo.json
 ├── package.ps1
-└── README.md
+├── config说明.json
+└── README.md        # 可选
 ```
 
 ## 分层建议
@@ -53,7 +54,7 @@ PluginName/
 ├── PluginInfo.json
 ├── config.json
 ├── config说明.json
-├── README.md
+├── README.md        # 可选
 └── CHANGELOG.md
 ```
 
@@ -68,14 +69,14 @@ PluginName/
 └── config说明.json
 ```
 
-这种结构对服务器管理员更直观，也方便直接复制到 `ArkApi/Plugins/PluginName/`。是否使用 `config/` 子目录、说明文件叫什么名字都不是重点，重点是发布包要自洽：
+这种结构对服务器管理员更直观，也方便直接复制到 `ArkApi/Plugins/PluginName/`。当前标准要求 `config说明.json` 作为配置说明文件；是否额外使用 `README.md` 或 `config/` 子目录由项目自己决定，重点是发布包要自洽：
 
 - 插件实际读取的位置必须和包内文件一致。
 - `PluginInfo.json` 必须在插件根目录。
 - `config.json` 应该是干净、可被严格 JSON 解析的运行配置。
-- 配置说明文件通常是复制一份真实配置结构后在字段旁写说明；它只给人看，不要作为运行配置读取。
+- `config说明.json` 是必需的配置说明文件，通常复制一份真实配置结构后在字段旁写说明；它只给人看，不要作为运行配置读取。
 - 如果说明文件里有 `//` 注释，即使命名为 `.json`，也不是严格 JSON。
-- 如果包含 `.dll.arkapi`、签名、校验或兼容文件，要在 README 里说明用途。
+- 如果包含 `.dll.arkapi`、签名、校验或兼容文件，应在 `config说明.json`、`README.md` 或项目文档里说明用途。
 
 如果插件配置较复杂，也可以采用：
 
@@ -84,8 +85,9 @@ PluginName/
 ├── PluginName.dll
 ├── PluginInfo.json
 ├── config.json
-├── config-commented.json
-└── README.md
+├── config说明.json
+├── config-commented.json  # 可选
+└── README.md              # 可选
 ```
 
 每次打包后检查 DLL 时间，避免服务器误拷旧包。

@@ -27,12 +27,12 @@ Copy-Item -Recurse .\templates\plugin-skeleton ..\my-plugin
 
 - `PluginInfo.json`
 - `config.json`
-- `config说明.json` 或 `config-commented.json`
+- `config说明.json`
 - `src/core`
 - `src/plugin`
 - `tests`
 - `package.ps1`
-- `README.md`
+- `README.md` 可选
 
 模板目录只提供结构思路，不包含可直接编译的 C++ 代码。
 

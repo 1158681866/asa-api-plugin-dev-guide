@@ -26,12 +26,14 @@
 
 ```text
 config.json
-配置说明文件
+config说明.json
 ```
 
 `config.json` 是插件运行时读取的文件，应保持严格 JSON，不写 `//` 注释，避免解析器不兼容。
 
-配置说明文件是给服务器管理员看的，可以写注释、公式、示例、命令和注意事项。常见形式包括 README、wiki、`config-commented.json`、`config说明.json` 等。文件名和 `.json` 后缀不是标准；真正有价值的是它保留了真实配置结构，并在结构旁边解释每个字段怎么改。
+`config说明.json` 是给服务器管理员看的必需说明文件，可以写注释、公式、示例、命令和注意事项。它应保留真实配置结构，并在结构旁边解释每个字段怎么改。
+
+`README.md` 可选，适合写插件总览、安装、命令和排错入口。`CONFIG.zh-CN.md` 不作为统一标准项，只在项目自己需要时保留。
 
 只要说明文件里有 `//` 注释，它就不是严格 JSON。插件运行时不应该读取它。
 
@@ -50,12 +52,7 @@ config.json
 - 修改后是否需要重载或重启。
 - 对应的 RCON / 控制台命令。
 
-常见命名示例：
-
-- `config说明.json`
-- `config-commented.json`
-
-命名可以按项目习惯来，但 README 里要写清楚：插件真正读取的是 `config.json`。
+可以额外提供 `config-commented.json`、wiki 或 README，但不能替代 `config说明.json`。说明文件里要写清楚：插件真正读取的是 `config.json`。
 
 ## 配置说明写法
 
