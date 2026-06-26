@@ -11,7 +11,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 
 1. 先从当前项目、工程文件、include 路径、打包脚本或任务说明里确认插件根目录和本地 AsaApi SDK 路径。
 2. 改代码前先读现有实现。搜索符号、Hook、配置字段、崩溃关键字、旧逻辑时优先用 `rg`。
-3. 每个引擎/API 符号优先查官方文档 / ASA API wiki：`https://arkserverapi.wiki/asa/index.html`；官方没有、写得不清楚或疑似过期时，再用当前项目使用的本地 AsaApi SDK、成熟插件源码交叉确认。
+3. 每个引擎/API 符号优先查官方文档 / ASA API wiki：`https://arkserverapi.wiki/asa/index.html`；官方资料足够时不要默认翻 SDK。只有官方没有、写得不清楚、疑似过期，或需要解决编译/签名不一致时，再用当前项目使用的本地 AsaApi SDK、成熟插件源码交叉确认。
 4. 不确定的 Hook 签名、字段名、调用链必须标记为“待确认”，不要写成确定结论。
 5. 行为改动要同步更新代码、默认配置、测试、包内文件和文档。
 6. 完成后编译、跑已有测试、打包，并报告产物路径和 DLL 时间。
@@ -43,7 +43,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 ## 常用流程
 
 1. 阅读插件结构：源码、核心配置、测试、文档、打包脚本。
-2. 优先在官方文档 / wiki 中确认相关 API 符号；不足时再查本地头文件和成熟插件源码。
+2. 优先在官方文档 / wiki 中确认相关 API 符号；足够时停在这里，不默认查 SDK。不足时再查本地头文件和成熟插件源码。
 3. 做范围清晰、可验证、可回滚的代码/配置/文档/测试改动。
 4. 编译 Release。优先使用项目现有构建方式；Windows 常见方式是 MSBuild，参数为 `Configuration=Release`、`Platform=x64`。
 5. 运行已有单元测试或 core tests。

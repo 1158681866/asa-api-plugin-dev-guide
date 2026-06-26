@@ -2,7 +2,7 @@
 
 把内容分成三类：
 
-- API 事实：优先来自官方文档 / ASA API Wiki / ArkServerApi GitHub；本地 AsaApi SDK 用于确认当前编译版本和补齐官方未覆盖内容。
+- API 事实：优先来自官方文档 / ASA API Wiki / ArkServerApi GitHub；官方资料足够时不要默认查 SDK。本地 AsaApi SDK 只用于确认当前编译版本、解决签名/编译不一致，或补齐官方未覆盖内容。
 - 社区常见结构：来自常见插件发布包结构。
 - 工程判断：来自排错、维护和实测，需要写清楚适用条件，不应伪装成 wiki 标准。
 
