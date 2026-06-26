@@ -65,6 +65,12 @@ DECLARE_HOOK(SomeHook, ReturnType, ClassType*, Arg1Type, Arg2Type);
 
 注册失败时，不要硬试。先回头查签名。
 
+## 字段封装
+
+- 本地 SDK 里的 bitfield 往往返回 `BitFieldValue<bool, ...>`，不是普通 `bool`。
+- 不要直接写 `!obj->SomeFlag()` 这种表达式，编译可能报“无法应用于 BitFieldValue”。
+- 需要读这类字段时，先查当前 SDK 的封装用法或同项目已有写法；如果能用更明确的对象关系替代，例如在线玩家列表、控制器指针、类名或已确认字段，优先用这些更直接的判断。
+
 ## 选 Hook 的评估顺序
 
 1. 明确业务事件 Hook
