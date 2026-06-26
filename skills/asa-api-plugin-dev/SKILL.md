@@ -11,7 +11,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 
 1. 先从当前项目、工程文件、include 路径、打包脚本或任务说明里确认插件根目录和本地 AsaApi SDK 路径。
 2. 改代码前先读现有实现。搜索符号、Hook、配置字段、崩溃关键字、旧逻辑时优先用 `rg`。
-3. 每个引擎/API 符号先按当前项目使用的本地 AsaApi SDK 确认；wiki 用于检索和交叉确认：`https://arkserverapi.wiki/asa/index.html`。
+3. 每个引擎/API 符号优先查官方文档 / ASA API wiki：`https://arkserverapi.wiki/asa/index.html`；官方没有、写得不清楚或疑似过期时，再用当前项目使用的本地 AsaApi SDK、成熟插件源码交叉确认。
 4. 不确定的 Hook 签名、字段名、调用链必须标记为“待确认”，不要写成确定结论。
 5. 行为改动要同步更新代码、默认配置、测试、包内文件和文档。
 6. 完成后编译、跑已有测试、打包，并报告产物路径和 DLL 时间。
@@ -22,7 +22,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 
 只打开当前任务需要的参考文件：
 
-- `references/api-lookup.md`：SDK / wiki 查询、Hook 签名确认。
+- `references/api-lookup.md`：官方文档 / wiki / SDK 查询、Hook 签名确认。
 - `references/official-api-sources.md`：区分 API 事实、社区常见结构和工程判断。
 - `references/development-workflow.md`：需求边界、代码分层、验证和发布流程。
 - `references/stability.md`：崩服/无响应风险建议和稳定写法。
@@ -34,7 +34,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 ## 工程判断
 
 - 大范围扫描、高频全局 Hook、脚本派发、状态同步、setter 等做法需要说明业务必要性、触发频率、范围限制、可观测日志和回滚方式。
-- 不靠猜测确定游戏对象路径、Outer 链、脚本派发、状态同步、setter 等调用链；不确定时先查 SDK、wiki 或现有项目代码。
+- 不靠猜测确定游戏对象路径、Outer 链、脚本派发、状态同步、setter 等调用链；不确定时先查官方文档 / wiki，再查 SDK 或现有项目代码。
 - 会触发蓝图、脚本、网络同步或其他插件链路的调用要写清楚验证方式。
 - 主方案变更后，不保留无用兜底系统、旧 Hook、废弃配置字段。
 - 服务器不在本机时，不要声称“已上服验证”。只能说明本地编译/测试/打包已通过，并告诉用户服务器上要看哪些日志或效果。
@@ -43,7 +43,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 ## 常用流程
 
 1. 阅读插件结构：源码、核心配置、测试、文档、打包脚本。
-2. 在本地头文件或 wiki 中确认相关 API 符号。
+2. 优先在官方文档 / wiki 中确认相关 API 符号；不足时再查本地头文件和成熟插件源码。
 3. 做范围清晰、可验证、可回滚的代码/配置/文档/测试改动。
 4. 编译 Release。优先使用项目现有构建方式；Windows 常见方式是 MSBuild，参数为 `Configuration=Release`、`Platform=x64`。
 5. 运行已有单元测试或 core tests。
@@ -62,6 +62,8 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 ## 设计倾向
 
 选型时先说明业务目标、可用 API、调用频率、目标对象来源和验证方式。事件 Hook、短时重试、字段写入、timer、全局 Hook 都只是工具；是否合适取决于插件目标和实测结果。
+
+涉及数据库、Web 后端、机器人或外部系统联动时，先参考同类成熟 ASA 插件和当前项目已有做法，再设计通信链路。不要默认把 ASA 插件做成 HTTP API 客户端；ArkShop / ICE 这类插件直接读写 MySQL、读取本地 config、调用现有插件命令都是常见落地方式。只有在直接数据库/现有命令路径明确做不了、或用户要求服务化架构时，再引入 Web API 中转、新服务、新队列或新抽象。
 
 配置设计要区分两类内容：
 
