@@ -109,6 +109,12 @@ ASA 插件日志、Windows 控制台、PowerShell、源码文件编码、编译�
 - 游戏内聊天、玩家名、中文命令、`FString` 和 `std::string` 互转，优先使用 UTF-8 转换，例如 `FString::FromStringUTF8()`、`ToStringUTF8()`、`TCHAR_TO_UTF8`。
 - AsaApi logger 的 Windows 控制台 sink 可能走 `WriteConsoleA` / 系统 ANSI 代码页。若源码和业务字符串是 UTF-8，写 `Log::GetLog()` 前可先用 `MultiByteToWideChar(CP_UTF8)` 转宽字符，再用 `WideCharToMultiByte(CP_ACP)` 转系统 ACP。
 - HTTP、数据库、JSON 回写仍保持 UTF-8，不要因为控制台日志需要 ACP 就把业务数据转成 ACP。
+- 先按日志前缀分清来源。`[PluginName]` 一般是插件自己写出的日志；`[API][info] Loaded plugin PluginName Vx.x (Description)` 是 AsaApi core 读取 `PluginInfo.json` 后写出的加载日志。插件自己的中文日志正常，不代表 `PluginInfo.json` 的中文 `Description` 在加载日志里也会正常。
+- 如果只有 `Loaded plugin ... (中文 Description)` 乱码，优先检查三个点：
+  - `PluginInfo.json` 是否保存为 UTF-8。
+  - 启动服务器的 CMD/终端代码页是否为 UTF-8，可用 `chcp` 查看，启动脚本里可加 `chcp 65001 >nul`。
+  - 当前 AsaApi logger 是否用 `WriteConsoleA` 这类窄字符输出；这种情况下控制台代码页和输出字节必须匹配。
+- 如果插件需要在 `Plugin_Init()` 里主动调整控制台编码，可以早期调用 `SetConsoleOutputCP(CP_UTF8)` / `SetConsoleCP(CP_UTF8)`。同时，插件自己的日志包装不要继续固定转 ACP，应按 `GetConsoleOutputCP()` 判断：控制台已经是 UTF-8 时直接输出 UTF-8，否则再转当前输出代码页。
 - 控制台日志和文件日志可能共用同一个 sink 链。若控制台中文正常但文件用 UTF-8 查看乱码，需要单独评估自建 UTF-8 文件日志。
 - 第三方插件日志乱码时，先看日志前缀区分来源，不要误判为当前插件异常。
 
