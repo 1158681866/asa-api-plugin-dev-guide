@@ -26,6 +26,7 @@ rg -n "ToStringUTF8|FromStringUTF8|TCHAR_TO_UTF8|TCHAR_TO_ANSI" <sdk-or-project>
 - `FString::ToString()` 在部分 SDK 封装中可能走 ANSI 转换，适合纯英文标识，不适合玩家输入、中文别名、中文显示名。
 - 如果命令支持中文参数，要给 core tests 或手动测试覆盖中文别名、中文玩家名、中文配置读取。
 - 日志输出、游戏内聊天、配置解析可能分别需要不同编码处理；不要用“能编译”代替“游戏内显示正确”。
+- AsaApi 控制台日志不一定走 `FString` 链路；中文日志乱码时按 `debugging.md` 的 `Log::GetLog()` / 系统 ACP 方案处理，不要把日志修法套到游戏内聊天或 HTTP/JSON 数据上。
 
 ## Hook 规则
 

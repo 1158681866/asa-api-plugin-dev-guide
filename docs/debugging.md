@@ -104,7 +104,41 @@ ASA 插件日志、Windows 控制台、PowerShell、源码文件编码、编译�
 
 建议：
 
-- 插件内部排错日志使用 ASCII 英文关键字，尤其是状态、错误原因、任务号、玩家 id、蓝图路径。
-- 玩家可见文案、配置说明、后台文档可以保留中文。
-- 必须输出中文日志时，确认源码 UTF-8、编译参数、控制台代码页和日志查看器编码一致。
+- 玩家可见文案、配置说明、后台文档可以保留中文，不要用“替换成 `?` 或改成英文”规避应该保留的中文。
+- 源码里有中文字符串字面量时，MSVC 项目优先加 `/utf-8`，确保源码按 UTF-8 编译。
+- 游戏内聊天、玩家名、中文命令、`FString` 和 `std::string` 互转，优先使用 UTF-8 转换，例如 `FString::FromStringUTF8()`、`ToStringUTF8()`、`TCHAR_TO_UTF8`。
+- AsaApi logger 的 Windows 控制台 sink 可能走 `WriteConsoleA` / 系统 ANSI 代码页。若源码和业务字符串是 UTF-8，写 `Log::GetLog()` 前可先用 `MultiByteToWideChar(CP_UTF8)` 转宽字符，再用 `WideCharToMultiByte(CP_ACP)` 转系统 ACP。
+- HTTP、数据库、JSON 回写仍保持 UTF-8，不要因为控制台日志需要 ACP 就把业务数据转成 ACP。
+- 控制台日志和文件日志可能共用同一个 sink 链。若控制台中文正常但文件用 UTF-8 查看乱码，需要单独评估自建 UTF-8 文件日志。
 - 第三方插件日志乱码时，先看日志前缀区分来源，不要误判为当前插件异常。
+
+示例：
+
+```cpp
+std::string Utf8ToAnsiForConsole(const std::string& value)
+{
+    const int wideSize = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, value.c_str(), -1, nullptr, 0);
+    if (wideSize <= 0)
+    {
+        return value;
+    }
+
+    std::wstring wide(static_cast<size_t>(wideSize), L'\0');
+    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, value.c_str(), -1, wide.data(), wideSize);
+
+    const int ansiSize = WideCharToMultiByte(CP_ACP, 0, wide.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    if (ansiSize <= 0)
+    {
+        return value;
+    }
+
+    std::string ansi(static_cast<size_t>(ansiSize), '\0');
+    WideCharToMultiByte(CP_ACP, 0, wide.c_str(), -1, ansi.data(), ansiSize, nullptr, nullptr);
+    if (!ansi.empty() && ansi.back() == '\0')
+    {
+        ansi.pop_back();
+    }
+
+    return ansi;
+}
+```

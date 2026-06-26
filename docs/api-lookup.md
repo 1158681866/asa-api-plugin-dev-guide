@@ -19,6 +19,7 @@ rg -n "ToStringUTF8|FromStringUTF8|TCHAR_TO_UTF8|TCHAR_TO_ANSI" <sdk-or-project>
 - `FString::ToString()` 在部分 SDK 封装中可能走 ANSI 转换，容易把中文变成 `?` 或导致中文命令匹配失败。
 - 如果插件支持中文命令或中文显示名，测试里要覆盖中文参数、中文配置读取和游戏内显示。
 - 日志能正常输出，不代表游戏内聊天、RCON、配置读取都正常；它们可能走不同转换链。
+- AsaApi 控制台日志不一定走 `FString` 链路；中文日志乱码时按 [排错手册](debugging.md) 的 `Log::GetLog()` / 系统 ACP 方案处理，不要把日志修法套到游戏内聊天或 HTTP/JSON 数据上。
 
 ## Wiki
 

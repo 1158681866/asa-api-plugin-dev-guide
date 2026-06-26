@@ -63,7 +63,9 @@
 
 ASA 插件日志、控制台、PowerShell、Windows 区域设置和源码编码可能不一致。出现中文乱码时，先判断是显示/编码问题还是业务逻辑问题：
 
-- 插件内部日志尽量使用 ASCII 英文关键日志，尤其是排错阶段的状态、错误原因、任务号、玩家 id、蓝图路径。
-- 玩家可见文本、配置说明和后台文案可以用中文；服务器控制台排错日志不建议依赖中文。
-- 如果必须输出中文日志，确认源码保存为 UTF-8、编译器输入编码、控制台代码页和日志查看器编码一致；否则同一条日志在控制台和文件里可能表现不同。
+- 玩家可见文本、配置说明和后台文案可以用中文；不要用“替换成 `?` 或改成英文”来规避应该保留的中文。
+- 源码里有中文字符串字面量时，MSVC 项目优先加 `/utf-8`，确保源码按 UTF-8 编译。
+- 游戏内聊天、玩家名、中文命令、`FString` 和 `std::string` 互转，优先按 `api-lookup.md` 使用 UTF-8 转换，例如 `FString::FromStringUTF8()`、`ToStringUTF8()`、`TCHAR_TO_UTF8`。
+- AsaApi logger 的 Windows 控制台 sink 可能走 `WriteConsoleA` / 系统 ANSI 代码页。若源码和业务字符串是 UTF-8，写 `Log::GetLog()` 前可用 `MultiByteToWideChar(CP_UTF8)` 再 `WideCharToMultiByte(CP_ACP)` 转成系统 ACP，类似 `Utf8ToAnsiForConsole()`；HTTP/数据库/JSON 回写仍保持 UTF-8，不要转 ACP。
+- 控制台日志和文件日志可能共用同一个 sink 链。若控制台中文正常但文件用 UTF-8 查看乱码，需要单独评估自建 UTF-8 文件日志，而不是把 API 数据或玩家文案改成 ACP。
 - 第三方插件中文乱码通常不代表本插件异常；先按日志前缀区分来源。
