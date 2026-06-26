@@ -12,6 +12,7 @@
 - Hook 内大量日志
 - Hook 内复杂 IO
 - 循环里频繁 `ForceNetUpdate()`
+- 在 `API::Requests`、自建 `std::thread`、异步 HTTP 回调等非游戏主线程里访问 `UWorld`、玩家控制器、背包、物品、恐龙、结构等游戏对象，或调用 `GiveItem`、脚本事件、网络同步等游戏 API
 
 这些操作不是一概禁止。采用前应记录：
 
@@ -40,6 +41,12 @@
 ### 高频全局 Hook
 
 触发频率越高，插件里的小成本越容易被放大，也更容易造成服务器无响应。是否可接受取决于逻辑复杂度、调用频率和服务器负载。
+
+### 异步回调线程
+
+`API::Requests::CreateGetRequest/CreatePostRequest` 会开后台线程执行 HTTP 请求，回调不等于游戏主线程。HTTP 回调里适合做网络结果检查、JSON 解析和构建纯数据任务，不适合直接读写 `UWorld`、玩家控制器、背包或物品。
+
+需要调用 `AShooterPlayerController::GiveItem`、修改背包、查找在线玩家、触发脚本或同步时，应把纯数据任务投递回主线程路径，例如 `API::Timer::Get().DelayExecute(..., delay=0, task)`，再在 timer 回调里做游戏对象操作。否则可能出现物品已发出但服务器无响应、玩家断联或状态损坏。
 
 ## 选型方法
 

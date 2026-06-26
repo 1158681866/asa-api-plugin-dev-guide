@@ -15,8 +15,20 @@
 - setter / sync 类调用，可能触发内部脚本、UI、复制同步或其他插件 Hook 链。
 - 全局脚本 Hook，尤其当其他插件也 Hook 脚本派发时。
 - 循环里反复 `ForceNetUpdate()`。
+- 在 `API::Requests`、自建 `std::thread`、异步 HTTP 回调等非游戏主线程里访问 `UWorld`、玩家控制器、背包、物品、恐龙、结构等游戏对象，或调用 `GiveItem`、脚本事件、网络同步等游戏 API。
 
 这些操作不是一概禁止。采用前说明业务必要性、触发频率、范围限制、可观测日志和回滚方式。
+
+## 线程与游戏对象
+
+AsaApi `API::Timer::RecurringExecute(..., async=false)` 通过 API timer update 触发，适合做轻量调度；`API::Requests::CreateGetRequest/CreatePostRequest` 会开后台线程，HTTP 回调不应直接操作游戏世界对象。
+
+推荐模式：
+
+- HTTP 回调只做网络结果检查、JSON 解析、构建纯数据任务。
+- 需要读写 `UWorld`、查找在线玩家、调用 `AShooterPlayerController::GiveItem`、修改背包或触发游戏同步时，把纯数据任务投递回主线程路径，例如 `API::Timer::Get().DelayExecute(..., delay=0, task)`。
+- 主线程任务里再做对象查找和游戏 API 调用，避免物品已发出但服务器无响应、断联或出现难定位状态损坏。
+- 如果必须在后台线程处理耗时逻辑，只处理纯数据、HTTP、文件或数据库结果，不持有或跨线程使用 `UObject`/`AActor` 指针。
 
 ## 评估做法
 
