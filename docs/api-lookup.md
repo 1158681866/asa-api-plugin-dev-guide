@@ -1,8 +1,15 @@
 # API 与 Hook 查询
 
-## 本地优先
+## Wiki 优先
 
-本地 SDK 是编译真相。先搜本地，再看 wiki。
+官方文档 / ASA API Wiki 是第一查询入口；资料足够时直接停，不查 SDK。本地头文件只用于解决官方未覆盖、写得不清楚、疑似过期，或已经出现签名/编译不一致的问题。
+
+查询顺序：
+
+1. 先查官方文档 / ASA API Wiki：`https://arkserverapi.wiki/asa/index.html`。
+2. 如果 Wiki 已经足够支撑实现，停止查询。
+3. Wiki 没有、写得不清楚、疑似过期，或编译/签名对不上时，再从项目文件里找 SDK include / lib 路径。
+4. 只有进入第 3 步后，才用 `rg` 搜本地 AsaApi SDK 头文件，确认当前编译版本的签名和字段。
 
 ```powershell
 rg -n "DECLARE_HOOK|SetHook|<FunctionName>" <sdk-or-project>
@@ -36,11 +43,11 @@ https://arkserverapi.wiki/asa/index.html
 - 搜接口名字
 - 辅助理解 generated wrapper
 
-注意：wiki 不是最终编译依据。写代码前仍要看本地 SDK。
+注意：Wiki 足够时，不为了“保险”再查本地 SDK。只有编译失败、签名不一致或 Wiki 缺资料时再对照本地头文件。
 
 Wiki 是 API 索引，不是完整插件开发教程。写文档时要区分：
 
-- API 事实：wiki / SDK 能确认。
+- API 事实：优先由 Wiki / 官方文档确认；必要时由 SDK 补缺。
 - 工程判断：需要结合插件场景和实测。
 - 项目特定结论：不能直接写成通用标准。
 
@@ -55,7 +62,7 @@ Hook 前需要确认并记录来源：
 - 参数类型
 - 返回值
 - 是否有 `_Implementation`
-- 是否存在于当前 SDK/服务器版本
+- 是否存在于官方文档 / Wiki；必要时确认当前 SDK/服务器版本
 
 常见写法：
 

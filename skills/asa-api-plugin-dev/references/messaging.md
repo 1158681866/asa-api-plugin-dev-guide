@@ -9,7 +9,7 @@
 - `SendNotification(player, color, scale, time, icon, msg)`：屏幕通知，不是聊天框历史里的普通消息行。
 - `ClientServerChatDirectMessage(&message, color, bold, &sender)`：直发聊天行，有发送者名，也有颜色；实际显示样式可能接近服务器直发消息，需要在目标服务器里截图确认。
 
-所有接口写代码前都要在本地 SDK 头文件里核对签名。
+所有接口优先按官方文档 / ASA API Wiki 核对签名；Wiki 足够时不查 SDK。只有 Wiki 缺资料、疑似过期或编译/签名对不上时，再用本地 SDK 补充确认。
 
 ## 实用选择
 

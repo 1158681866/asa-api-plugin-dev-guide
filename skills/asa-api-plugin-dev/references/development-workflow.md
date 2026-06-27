@@ -5,7 +5,7 @@
 ## 工作顺序
 
 1. 明确触发来源、目标对象、状态生命周期、配置项和验证方式。
-2. 按本地 SDK、ASA API Wiki、ArkServerApi GitHub 的顺序确认接口。
+2. 按 ASA API Wiki / 官方文档优先确认接口；Wiki 足够时不查 SDK。
 3. 把可测试逻辑放在 `core`，把 AsaApi Hook、命令、游戏对象访问放在 `plugin`。
 4. 接入层保持短路径：解析、权限、目标对象、状态变更、回执或日志。
 5. 同步更新代码默认值、`config.json`、配置说明、README、测试和发布包。

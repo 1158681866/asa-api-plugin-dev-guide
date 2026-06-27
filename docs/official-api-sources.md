@@ -2,7 +2,7 @@
 
 本项目的内容分三类：
 
-1. **官方/API 可验证事实**：来自 ASA API Wiki、ArkServerApi GitHub、本地 AsaApi SDK 头文件。
+1. **官方/API 可验证事实**：优先来自 ASA API Wiki、ArkServerApi GitHub；本地 AsaApi SDK 只在 Wiki 缺资料、疑似过期或编译/签名对不上时补充确认。
 2. **社区常见结构**：来自常见插件发布包，例如 `PluginName.dll`、`PluginInfo.json`、`config.json`、`config说明.json`。
 3. **工程判断**：来自插件维护、排错和实测，需要写清楚适用条件，不应伪装成 wiki 标准。
 
@@ -69,9 +69,9 @@ API 事实：Commands 提供 AddChatCommand / AddConsoleCommand / AddRconCommand
 
 Agent 写代码或文档时：
 
-- API 名称、函数签名、类成员必须从本地 SDK 或 wiki 确认。
+- API 名称、函数签名、类成员优先从官方文档 / ASA API Wiki 确认；Wiki 足够时不查 SDK。
 - 不能把某个私有插件排错结论写成通用 API 规则。
-- 对无法从 wiki 或 SDK 证明的内容，用“建议、风险、需要验证”表达。
+- 对无法从 Wiki 或必要时 SDK 证明的内容，用“建议、风险、需要验证”表达。
 - 如果要求“按官方/wiki 来”，优先输出 API 事实，不扩展过多工程判断。
 
 ## 常用链接

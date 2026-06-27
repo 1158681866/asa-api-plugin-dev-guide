@@ -18,13 +18,13 @@ ASA API 插件开发应按“确认接口、隔离核心逻辑、最小接入服
 
 接口确认顺序：
 
-1. 当前项目已使用的 SDK 头文件和源码。
-2. 本地 `AsaApi` SDK。
-3. ASA API Wiki。
-4. ArkServerApi/AsaApi GitHub。
+1. ASA API Wiki / 官方文档。
+2. ArkServerApi/AsaApi GitHub。
+3. 当前项目已使用的源码。
+4. 本地 `AsaApi` SDK（只在 Wiki 缺资料、疑似过期或编译/签名对不上时使用）。
 5. 其他开源插件或论坛讨论。
 
-只有本地 SDK 或 wiki 能确认函数、字段、签名时，才能把它写成 API 事实。其他来源只能作为实现参考或待验证假设。
+只有官方文档 / Wiki，或必要时本地 SDK 能确认函数、字段、签名时，才能把它写成 API 事实。其他来源只能作为实现参考或待验证假设。
 
 ## 3. 设计代码分层
 

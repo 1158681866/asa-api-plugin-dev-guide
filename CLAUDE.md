@@ -7,7 +7,7 @@ This repository is not a server plugin and not a buildable plugin by itself. It 
 ## Core Behavior
 
 - Read existing plugin code before making changes.
-- Verify every Hook signature, field, wrapper, and native call against the local AsaApi SDK or existing project code.
+- Verify every Hook signature, field, wrapper, and native call against the official docs / ASA API Wiki first. Only use the local AsaApi SDK when the Wiki is missing, unclear, likely outdated, or compilation/signatures disagree.
 - Separate API facts from engineering advice and project-specific experience.
 - Use `rg` for searches.
 - Evaluate event Hooks, timers, scans, direct object fields, native calls, and global Hooks by business need, frequency, scope, observability, and rollback path.
@@ -19,7 +19,7 @@ This repository is not a server plugin and not a buildable plugin by itself. It 
 
 Read only the docs relevant to the task:
 
-- `docs/api-lookup.md` for SDK and Hook lookup.
+- `docs/api-lookup.md` for official/Wiki-first API and Hook lookup.
 - `docs/development-workflow.md` for implementation flow.
 - `docs/official-api-sources.md` for source boundaries.
 - `docs/stability.md` for risk boundaries.
