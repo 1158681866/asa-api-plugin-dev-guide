@@ -2,6 +2,8 @@
 
 ## 未发布
 
+- 补充数据库型 ASA 插件注意事项：旧版 MySQL C Connector 需要 `winsock2.h`/`Ws2_32.lib`，MySQL 字符串写入前要做 UTF-8 安全截断，发布文档应提供可复制的数据库自检 SQL/命令。
+- 补充定时器任务与 RCON/控制台手动触发并存时的防重入建议：全图扫描、审计写入、Destroy Actor、发奖励、权限或数据库状态修改等任务入口应加互斥/运行中标记，并在 Status 或日志暴露 running/skipped 状态。
 - 补充 ASA 插件与数据库 / Web / 机器人联动的设计原则：先参考 ArkShop / ICE 等成熟插件和当前项目已有做法，不默认把插件做成 HTTP API 客户端；直接 MySQL、本地配置和现有插件命令都是常见落地方式。
 - 收紧 API 查询规则：官方文档 / ASA API Wiki 足够时直接采用，不再默认查本地 SDK；SDK 只用于 Wiki 缺资料、疑似过期或编译/签名不一致。
 
