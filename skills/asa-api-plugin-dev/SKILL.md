@@ -18,6 +18,13 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 7. 区分 API 事实、社区常见结构和工程判断；不要把项目特定问题写成通用规则。
 8. ASA 插件开发、排错或发布结束前，必须执行一次“自我迭代检查”：如果本轮暴露了可复用于多类 ASA 插件的坑点、验证步骤或稳定写法，默认自动更新本 skill 或对应参考，不等待用户提醒；如果只属于单个项目，应记录到项目文档；只有是否适合通用化存在明显争议、可能误导他人、或需要包含项目私有内容时，才先向用户确认。
 
+
+## 用户沟通与配置解释
+
+- 面向服主或用户解释配置项、Status 输出、日志字段、数据库字段、命令参数时，不要只写英文参数名或枚举值。必须同时给出中文含义，格式优先采用：`英文参数`：中文解释。
+- 当回复里出现 `CleanupScope=CurrentMapOnly`、`CrossMapActiveProtection=true`、`PermissionRules`、`Clean=false`、`InactiveDays=90` 这类字段时，必须紧跟中文说明，例如“清理范围=当前地图”“跨地图活跃保护=开启”“权限组/VIP 分级规则”“该组完全免清”“90 天不活跃才清理”。
+- 如果用户已经明确表示看不懂英文参数，后续同一任务中应优先用中文业务表述，再把英文参数作为括号里的配置名或排查线索。
+- README、`config说明.json`、Status 输出可以保留必要英文配置名；但对话总结、方案解释和交付说明必须带中文解释，不能假设用户会读配置说明文件。
 ## 按需读取参考
 
 只打开当前任务需要的参考文件：
@@ -84,3 +91,4 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 - ASA 插件如果直接包含旧版 MySQL C Connector 头文件（例如 ArkShop/Permissions 附带的 `mysql/mysql.h`），在 Windows/AsaApi 工程里可能因为 `WIN32_LEAN_AND_MEAN` 导致 `SOCKET/my_socket` 未定义。稳定写法是在包含 MySQL 头前先包含 `winsock2.h`，并确保链接 `Ws2_32.lib`；不要只靠 `Windows.h` 间接带出 socket 类型。
 - 写入 MySQL `VARCHAR`/`TEXT` 字段前，尤其是玩家名、中文日志、路径、RCON 文本、审计 reason/note，要按目标字段长度做 UTF-8 安全截断，不要直接 `std::string::substr()` 截固定字节。直接按字节截断可能切断多字节字符，在 `utf8mb4` + 严格模式下导致 INSERT/UPDATE 失败，进而让任务状态、审计表或活跃表停在中间态。
 - 数据库型 ASA 插件发布前，README 或运维文档里应给出可直接复制的自检 SQL/命令，至少覆盖：核心表是否创建、最近写入记录、任务/审计状态分布、失败记录计数、关键安全字段或跳过原因。发布包验证脚本也应检查这些自检入口是否存在，避免代码功能完整但上服后缺少可操作验收路径。
+
