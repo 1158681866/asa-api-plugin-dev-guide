@@ -47,6 +47,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 - 主方案变更后，不保留无用兜底系统、旧 Hook、废弃配置字段。
 - 服务器不在本机时，不要声称“已上服验证”。只能说明本地编译/测试/打包已通过，并告诉用户服务器上要看哪些日志或效果。
 - Debug 日志要有目标。发布前删除或用配置开关控制噪声日志。
+- 自动运行/定时维护类插件的正式运行日志不能只在“有处理对象”时写；插件启动、配置加载、数据库初始化、定时器启动、任务跳过、无候选/无动作扫描、异常和卸载都应有低噪声文件日志，方便确认插件确实在运行。
 
 ## 常用流程
 
@@ -92,4 +93,5 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 - ASA 插件如果直接包含旧版 MySQL C Connector 头文件（例如 ArkShop/Permissions 附带的 `mysql/mysql.h`），在 Windows/AsaApi 工程里可能因为 `WIN32_LEAN_AND_MEAN` 导致 `SOCKET/my_socket` 未定义。稳定写法是在包含 MySQL 头前先包含 `winsock2.h`，并确保链接 `Ws2_32.lib`；不要只靠 `Windows.h` 间接带出 socket 类型。
 - 写入 MySQL `VARCHAR`/`TEXT` 字段前，尤其是玩家名、中文日志、路径、RCON 文本、审计 reason/note，要按目标字段长度做 UTF-8 安全截断，不要直接 `std::string::substr()` 截固定字节。直接按字节截断可能切断多字节字符，在 `utf8mb4` + 严格模式下导致 INSERT/UPDATE 失败，进而让任务状态、审计表或活跃表停在中间态。
 - 数据库型 ASA 插件发布前，README 或运维文档里应给出可直接复制的自检 SQL/命令，至少覆盖：核心表是否创建、最近写入记录、任务/审计状态分布、失败记录计数、关键安全字段或跳过原因。发布包验证脚本也应检查这些自检入口是否存在，避免代码功能完整但上服后缺少可操作验收路径。
+
 
