@@ -64,7 +64,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 
 - `PluginInfo.json`：保持原标准，仍然必需。
 - `config.json`：保持严格 JSON。
-- `config说明.json`：必需的中文配置说明文件。
+- `config说明.json`：必需的中文配置说明文件，必须按字段表式结构编写；至少包含顶层说明、`字段` 对象，并让每个配置项写清 `类型`、`默认值`、`说明`，有范围/可选值/单位/风险开关时也必须写清。
 - `README.md`：可选，保留给项目自己的总览和安装说明。
 
 ## 设计倾向
