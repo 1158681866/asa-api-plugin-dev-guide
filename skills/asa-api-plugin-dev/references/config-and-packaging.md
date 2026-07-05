@@ -51,6 +51,25 @@
 - 每个运行配置字段至少写 `类型`、`默认值`、`说明`；数字写 `范围` 和 `单位`；枚举/模式写 `可选值` 和取值含义；危险开关写 `建议` 或 `注意`。
 - `config.json`、代码默认值、`config说明.json` 三者字段必须一致。新增、删除、重命名配置时必须同步更新三处。
 
+## PluginInfo.json
+
+- `PluginInfo.json` 必须使用 AsaApi 常见字段结构：
+
+```json
+{
+  "FullName": "PluginName",
+  "Description": "插件说明",
+  "Version": 0.1,
+  "MinApiVersion": 1.19,
+  "Dependencies": []
+}
+```
+
+- `Version` 必须是 JSON number，例如 `0.1`、`1.0`、`1.09`，不要写 `"0.1.0"` 这种字符串。
+- `MinApiVersion` 必须是 JSON number，不能缺失或写成字符串；缺失时 AsaApi 可能在 `PluginManager::ReadPluginInfo` / `LoadAllPlugins` 阶段报 `type must be number, but is null`。
+- 如果启动日志出现 `[json.exception.type_error.302] type must be number, but is string/null`，优先检查各插件包的 `PluginInfo.json` 里的 `Version` 和 `MinApiVersion`。
+- `Name`、`FriendlyName`、`Authors` 这类自定义字段不要替代 `FullName`、`Version`、`MinApiVersion`；需要保留时也应同时保留 AsaApi 标准字段。
+
 ## 测试
 
 轻量 core tests 优先覆盖：
@@ -79,6 +98,7 @@
 - DLL 时间是新的。
 - 包内配置是预期配置。
 - `PluginInfo.json` 存在。
+- `PluginInfo.json` 是合法 JSON，且 `Version`、`MinApiVersion` 都是 number。
 - `config.json` 和 `config说明.json` 存在。
 - 如项目包含 `README.md`，内容与当前行为一致。
 - `config说明.json` 是合法 JSON，且存在顶层 `字段` 对象；每个 `config.json` 顶层运行配置字段都能在 `字段` 对象里找到说明。
