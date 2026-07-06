@@ -15,8 +15,8 @@
 - 发布包应包含根目录 `config.json` 和 `config说明.json`。
 - `README.md` 可选。
 - `config.json` 是插件读取的严格 JSON；`config说明.json` 负责写字段用途、默认值、倍率/概率/时间计算示例、重载命令和注意事项。
-- `config说明.json` 不要写成简单 key-value 说明对象；必须使用字段表式结构，方便服主逐项查看和后续自动检查。
-- `config说明.json` 推荐结构：
+- `config说明.json` 不要写成简单 key-value 说明对象。可按项目需要选择字段表式结构或 JSONC 短注释样例；面向小白服主时优先使用接近 ArkShop 的紧凑 JSONC 排版。
+- 字段表式 `config说明.json` 推荐结构：
 
 ```json
 {
@@ -48,7 +48,7 @@
 }
 ```
 
-- 每个运行配置字段至少写 `类型`、`默认值`、`说明`；数字写 `范围` 和 `单位`；枚举/模式写 `可选值` 和取值含义；危险开关写 `建议` 或 `注意`。
+- 无论使用字段表还是 JSONC 短注释样例，每个公开运行配置字段都要能看懂中文含义；数字写单位/建议范围；枚举/模式写可选值和取值含义；危险开关写建议或注意。
 - `config.json`、代码默认值、`config说明.json` 三者字段必须一致。新增、删除、重命名配置时必须同步更新三处。
 
 ## PluginInfo.json
@@ -101,7 +101,7 @@
 - `PluginInfo.json` 是合法 JSON，且 `Version`、`MinApiVersion` 都是 number。
 - `config.json` 和 `config说明.json` 存在。
 - 如项目包含 `README.md`，内容与当前行为一致。
-- `config说明.json` 是合法 JSON，且存在顶层 `字段` 对象；每个 `config.json` 顶层运行配置字段都能在 `字段` 对象里找到说明。
+- `config说明.json` 可以是合法 JSON 字段表，也可以是带 `//` 注释的 JSONC 样例；发布检查应确认它明确写着“插件不读取，真正生效的是 config.json”，并覆盖公开配置字段。
 - 打包脚本处理中文文件名时优先使用 `-LiteralPath`，并显式检查 `config说明.json` 这个最终文件名；不要只看控制台乱码输出。
 - 清理旧 release 目录前必须解析并校验目标路径确实位于项目自己的 release 子目录下，避免误删，同时避免旧包残留伪造出“打包成功”。
 

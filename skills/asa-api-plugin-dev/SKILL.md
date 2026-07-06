@@ -52,7 +52,8 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 - 对象路径、玩家位置/朝向、玩家 ID、部落 ID、聊天/通知、蓝图路径、世界对象、Actor/Structure 范围扫描、物品蓝图、权限判断等常见能力，先查 `AsaApi::GetApiUtils()`、SDK helper、官方文档或对象公开安全函数。不要因为底层字段“能编译”就直接使用。
 - 如果必须用底层字段、组件字段、私有类信息、`NativeCall` 或手写偏移，必须满足：没有可用标准封装；访问集中在小函数内；有空指针/异常保护；有注释说明“未找到更高层封装/待上服验证”；高风险写字段路径必须放在明确配置开关或管理员命令后面。
 - 会触发蓝图、脚本、网络同步或其他插件链路的调用要写清楚验证方式。
-- 清理建筑、容器、库存类 Actor 时，要考虑删除动作可能在后续 Tick 生成 `ADroppedItem`、死亡包、库存包等二级 Actor；如果业务目标是“清干净资产”，应在主对象删除后留出短延迟再做一次掉落物/缓存类扫描。为了避免误清，优先按明确归属字段（例如 `ADroppedItem.AssignedToTribeID`）判断；不要仅凭距离、名称或模糊猜测清理其他玩家可能拥有的包裹。
+- 清理建筑、容器、库存类 Actor 时，要考虑删除动作可能在后续 Tick 生成 `ADroppedItem`、死亡包、库存包等二级 Actor；地基/支撑先被删除时，上面的工作台、保险柜、箱子等容器还可能由游戏后续判定“失去支撑”再炸掉，并生成新的库存缓存包。若业务目标是“清干净资产”，应在主对象删除后留出短延迟，至少做一次掉落物/缓存类扫描；对支撑链导致的容器缓存，建议再复查一次同部落结构/容器类 Actor，然后再做最终掉落物扫描。为了避免误清，优先按明确归属字段（例如 `ADroppedItem.AssignedToTribeID`、结构 `TargetingTeam`）判断；不要仅凭距离、名称或模糊猜测清理其他玩家可能拥有的包裹。
+- 大批量 Actor 清理如果拆到多个 Tick 执行，不要在队列中长期保存裸 `AActor*` 指针；ASA/UE 可能在支撑链、Destroy、GC、Mod 蓝图或其他插件逻辑中让队列里尚未处理的对象提前失效。稳定写法是按 ASA API Wiki 暴露的 `GetWeakReference(actor)` 保存 `TWeakObjectPtr<AActor>`，处理前再 `weak.Get()` 取有效对象；或保存可重新解析的标识并每批处理前重新扫描、重新校验归属。不要猜 `TWeakObjectPtr<AActor>(actor)` 这种构造写法；每次访问 `TargetingTeamField()`、位置、`Destroy()` 前都要重新取有效对象并兜底跳过无效对象。
 - 不要为了日志展示、状态文本、队列预览这类非核心功能，在定时器/扫描/清理链路里调用会加载或复制存档级数据的接口，例如 `AShooterGameMode::GetOrLoadTribeData()` / `LoadTribeData()`。ASA 某些版本在服务器刚启动、定时器早期或数据未稳定时可能在 `FTribeData::CopyFrom()` / `TArray<FString>::operator=()` 崩溃；展示字段读不到时应使用“暂未读到”等兜底，或只使用已经在线/已加载对象上现成的安全字段。
 - 主方案变更后，不保留无用兜底系统、旧 Hook、废弃配置字段。
 - 服务器不在本机时，不要声称“已上服验证”。只能说明本地编译/测试/打包已通过，并告诉用户服务器上要看哪些日志或效果。
@@ -76,7 +77,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 - `PluginInfo.json`：保持原标准，仍然必需。
 - `PluginInfo.json` 必须使用 AsaApi 期望的数字字段：`Version` 和 `MinApiVersion` 都写 JSON number，不要写 `"0.1.0"` 这类字符串，也不要漏写 `MinApiVersion`。
 - `config.json`：保持严格 JSON。
-- `config说明.json`：必需的中文配置说明文件，必须按字段表式结构编写；至少包含顶层说明、`字段` 对象，并让每个配置项写清 `类型`、`默认值`、`说明`，有范围/可选值/单位/风险开关时也必须写清。
+- `config说明.json`：必需的中文配置说明文件。格式可按项目需要选择“字段表式结构”或“JSONC 短注释样例”；面向小白服主时优先用类似 ArkShop 的紧凑 JSONC 排版，把解释放在配置项同一行或相邻短注释里，避免大段教程堆在配置文件中。无论哪种格式，都要覆盖每个公开配置项的中文含义、默认值/常用值、单位、可选值和风险开关，并明确“插件不会读取，真正生效的是 config.json”。
 - `README.md`：可选，保留给项目自己的总览和安装说明。
 
 ## 设计倾向
