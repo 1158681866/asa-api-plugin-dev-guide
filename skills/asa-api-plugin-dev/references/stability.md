@@ -19,6 +19,8 @@
 
 这些操作不是一概禁止。采用前说明业务必要性、触发频率、范围限制、可观测日志和回滚方式。
 
+如果业务目标本身是“找某个位置附近的对象”，优先评估官方/API 提供的空间范围查询，例如 `AsaApi::GetApiUtils().GetAllActorsInRange(...)` 或已确认签名的 octree 查询；不要先全图 `GetAllActorsOfClass(...)` 再用距离过滤，除非范围查询无法满足类过滤、对象类型或版本兼容需求。即使使用范围查询，也要限制触发时机、半径、重试次数，并在异常时停止本轮任务。
+
 ## 线程与游戏对象
 
 AsaApi `API::Timer::RecurringExecute(..., async=false)` 通过 API timer update 触发，适合做轻量调度；`API::Requests::CreateGetRequest/CreatePostRequest` 会开后台线程，HTTP 回调不应直接操作游戏世界对象。
