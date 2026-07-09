@@ -24,6 +24,8 @@
 
 如果目标是“找某个位置附近的对象”，优先评估官方/API 提供的空间范围查询，例如 `AsaApi::GetApiUtils().GetAllActorsInRange(...)` 或已确认签名的 octree 查询。除非范围查询无法满足类过滤、对象类型或版本兼容需求，否则不建议先全图 `GetAllActorsOfClass(...)` 再按距离过滤。范围查询也需要限制触发时机、半径、重试次数，并在异常时停止本轮任务。
 
+库存奖励、商店、礼包类功能发放资源或消耗品时，优先评估库存组件侧的数量接口，例如成熟插件常用的 `UPrimalInventoryComponent.IncrementItemTemplateQuantity(...)`。`UPrimalItem::AddNewItem(...)` 这类静态物品创建函数能创建更完整的物品对象，但签名和 offsets 更容易随 ASA/AsaApi 版本变化；只有确实需要品质、耐久、蓝图属性或非堆叠装备时，再评估这类创建路径，并把 NativeCall 阶段日志写细。
+
 ## 风险来源
 
 ### 对象路径和 Outer 链

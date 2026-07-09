@@ -21,6 +21,8 @@
 
 如果业务目标本身是“找某个位置附近的对象”，优先评估官方/API 提供的空间范围查询，例如 `AsaApi::GetApiUtils().GetAllActorsInRange(...)` 或已确认签名的 octree 查询；不要先全图 `GetAllActorsOfClass(...)` 再用距离过滤，除非范围查询无法满足类过滤、对象类型或版本兼容需求。即使使用范围查询，也要限制触发时机、半径、重试次数，并在异常时停止本轮任务。
 
+库存奖励或商店类插件发放资源/消耗品时，不要只因为 SDK 里有 `UPrimalItem::AddNewItem(...)` 就默认使用它；这类静态物品创建函数签名容易随 ASA/AsaApi offsets 变化。若目标只是给库存增加可堆叠物品，优先评估库存组件侧的数量接口，例如成熟插件常用的 `UPrimalInventoryComponent.IncrementItemTemplateQuantity(...)`，并以当前 SDK/服务器 API 实际可用签名为准。需要品质、耐久、蓝图属性或非堆叠装备时，再评估创建物品对象路径，并把 NativeCall 阶段日志写细。
+
 ## 线程与游戏对象
 
 AsaApi `API::Timer::RecurringExecute(..., async=false)` 通过 API timer update 触发，适合做轻量调度；`API::Requests::CreateGetRequest/CreatePostRequest` 会开后台线程，HTTP 回调不应直接操作游戏世界对象。
