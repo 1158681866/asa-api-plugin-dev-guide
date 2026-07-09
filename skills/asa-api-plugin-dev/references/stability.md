@@ -28,6 +28,7 @@ AsaApi `API::Timer::RecurringExecute(..., async=false)` 通过 API timer update 
 - HTTP 回调只做网络结果检查、JSON 解析、构建纯数据任务。
 - 需要读写 `UWorld`、查找在线玩家、调用 `AShooterPlayerController::GiveItem`、修改背包或触发游戏同步时，把纯数据任务投递回主线程路径，例如 `API::Timer::Get().DelayExecute(..., delay=0, task)`。
 - 主线程任务里再做对象查找和游戏 API 调用，避免物品已发出但服务器无响应、断联或出现难定位状态损坏。
+- Timer 回调不会替插件吞掉所有异常。`DelayExecute/RecurringExecute` 内如果会调用 `NativeCall`、`GetNativePointerField`、`StaticClass/GetPrivateStaticClass`、`UGameplayStatics::GetAllActorsOfClass`、发物品、库存刷新或网络同步，入口应包 `try/catch`，日志写清阶段并停止本轮重试。ASA 更新后 offsets 缺失时，`API::Offsets::GetAddress()` 可能抛 C++ 异常；不捕获会冒泡到 `API::Timer::Update()` 导致崩服。
 - 如果必须在后台线程处理耗时逻辑，只处理纯数据、HTTP、文件或数据库结果，不持有或跨线程使用 `UObject`/`AActor` 指针。
 
 ## 评估做法

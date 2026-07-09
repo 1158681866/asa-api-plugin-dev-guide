@@ -48,6 +48,8 @@
 
 需要调用 `AShooterPlayerController::GiveItem`、修改背包、查找在线玩家、触发脚本或同步时，应把纯数据任务投递回主线程路径，例如 `API::Timer::Get().DelayExecute(..., delay=0, task)`，再在 timer 回调里做游戏对象操作。否则可能出现物品已发出但服务器无响应、玩家断联或状态损坏。
 
+Timer 回调仍然属于插件代码边界，不能假设 AsaApi 会替插件吞掉所有异常。`DelayExecute/RecurringExecute` 里如果会调用 `NativeCall`、`GetNativePointerField`、`StaticClass/GetPrivateStaticClass`、`UGameplayStatics::GetAllActorsOfClass`、发物品、库存刷新或网络同步，建议在回调入口包 `try/catch`，日志写清当前阶段并停止本轮重试。ASA 更新后 offsets 缺失时，`API::Offsets::GetAddress()` 可能抛 C++ 异常；不捕获会冒泡到 `API::Timer::Update()`，表现为服务器崩溃。
+
 ## 选型方法
 
 - 先确认是否已有更贴近业务事件的 API 或 Hook。
