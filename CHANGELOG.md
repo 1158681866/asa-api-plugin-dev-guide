@@ -2,6 +2,7 @@
 
 ## 未发布
 
+- 新增 ASA API V2.00 / `89.31_Changes` 有效变更审计，整理核心缓存机制、C++20、StaticClass/StaticStruct、库存函数签名和当前缓存缺失键，并明确迁移前先生成版本变化清单。
 - 补充 SDK 升级时的头文件 / `AsaApi.lib` 同源校验：切换 Git 分支后必须重建库并记录时间、大小与哈希，同时按 NativeCall、字段、位域、Hook、StaticClass 和 helper 间接调用做完整接口清单。
 - 补充 ASA API 更新后的 offset 全量兼容检查：不能只看新头文件是否编译通过，还应把 DLL 实际嵌入的函数、字段和位域键与对应服务端 EXE 的官方缓存交叉核对。
 - 补充大批量 Actor 跨 Tick 清理稳定性规则：不要长期保存裸 `AActor*`；按 ASA API Wiki 使用 `GetWeakReference(actor)` 保存 `TWeakObjectPtr<AActor>`，处理前再 `weak.Get()`，并重新校验归属。

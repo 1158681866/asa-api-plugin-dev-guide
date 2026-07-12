@@ -20,6 +20,7 @@
 
 - [稳定性建议](stability.md)
 - [排错手册](debugging.md)
+- [ASA API V2.00 / 89.31_Changes 有效变更审计](asa-api-89.31-changes.md)
 
 ## 发布
 

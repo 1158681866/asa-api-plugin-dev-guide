@@ -24,6 +24,8 @@
 
 ASA API 更新后，单纯换头文件并成功编译只能证明 C++ 签名可用，不能证明服务端当前下载的 offset 缓存包含插件要调用的全部函数和字段。
 
+ASA API V2.00 / 89.31 的已整理差异见：[89.31_Changes 有效变更审计](asa-api-89.31-changes.md)。
+
 建议按以下顺序检查：
 
 1. 从插件工程文件确认实际使用的 SDK include 和 library 路径，并记录该 SDK 的 remote、branch、commit 和 dirty 状态。

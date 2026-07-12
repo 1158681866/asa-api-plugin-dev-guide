@@ -16,6 +16,7 @@
 
 API 刚更新且日志出现 `Failed to get the offset of '具体函数名'` 时：
 
+- 先固定旧、新 SDK 的 commit，整理一份忽略纯排版后的版本变更清单，至少分类记录：函数签名、字段/位域、`StaticClass`/`StaticStruct`、Hook、核心缓存机制和编译标准。不要直接从单个插件报错反推整个 API 变化。
 - 先核对报错时间是否早于新版 DLL 的编译/部署时间，避免拿旧日志误判新包。
 - 从插件工程文件确认实际 include 和 link 的 SDK 目录，再记录该 SDK 的 remote、branch、commit 和工作区状态；不要只检查另一个“看起来最新”的 SDK 副本。
 - 切换 SDK 分支只会更新源码和头文件，不会自动重建已有的 `AsaApi.lib`。先用目标分支完整 Rebuild SDK，再记录新库的时间、大小和 SHA-256，确认插件链接的不是旧产物。
