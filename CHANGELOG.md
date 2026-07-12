@@ -2,9 +2,10 @@
 
 ## 未发布
 
-- 新增 ASA API V2.00 / `89.31_Changes` 有效变更审计，整理核心缓存机制、C++20、StaticClass/StaticStruct、库存函数签名和当前缓存缺失键，并明确迁移前先生成版本变化清单。
-- 补充 SDK 升级时的头文件 / `AsaApi.lib` 同源校验：切换 Git 分支后必须重建库并记录时间、大小与哈希，同时按 NativeCall、字段、位域、Hook、StaticClass 和 helper 间接调用做完整接口清单。
-- 补充 ASA API 更新后的 offset 全量兼容检查：不能只看新头文件是否编译通过，还应把 DLL 实际嵌入的函数、字段和位域键与对应服务端 EXE 的官方缓存交叉核对。
+- 简化 ASA API 更新后的默认开发流程：普通新插件使用同版本官方 SDK 与 `AsaApi.lib` 完成 Release 编译和核心功能测试即可；完整 API 变化清单每个版本只整理一次，DLL/缓存全量审计仅在 offset 报错、运行异常、缓存不完整或高风险发布等场景按需执行。
+- 新增 ASA API V2.00 / `89.31_Changes` 版本级有效变更审计，集中整理核心缓存机制、C++20、StaticClass/StaticStruct、库存函数签名和当前缓存缺失键，供该版本所有插件复用。
+- 补充 SDK 升级时的头文件 / `AsaApi.lib` 同源校验：切换 Git 分支后需重新生成库；只有进入深度审计时才额外记录时间、大小、哈希和完整接口清单。
+- 补充按需执行的 offset 全量兼容检查：触发深度审计后，不能只看新头文件是否编译通过，还应把 DLL 实际嵌入的函数、字段和位域键与对应服务端 EXE 的官方缓存交叉核对。
 - 补充大批量 Actor 跨 Tick 清理稳定性规则：不要长期保存裸 `AActor*`；按 ASA API Wiki 使用 `GetWeakReference(actor)` 保存 `TWeakObjectPtr<AActor>`，处理前再 `weak.Get()`，并重新校验归属。
 - 调整 `config说明.json` 发布标准：可使用字段表或 JSONC 短注释样例；面向小白服主时优先紧凑短注释，避免强制大段字段表。
 - 补充中文服主场景下的插件运行输出规则：控制台/cmd日志、RCON回复和 Status 输出应优先使用中文业务含义。

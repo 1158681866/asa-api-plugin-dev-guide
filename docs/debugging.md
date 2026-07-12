@@ -20,25 +20,40 @@
 - 事件 Hook 阶段：字段读写、事件链、其他插件交互
 - 资源阶段：类加载、库存、容器、资产路径
 
-## API 更新后的 offset 全量兼容检查
+## API 更新后的兼容处理
 
-ASA API 更新后，单纯换头文件并成功编译只能证明 C++ 签名可用，不能证明服务端当前下载的 offset 缓存包含插件要调用的全部函数和字段。
+### 普通新插件：默认保持简单
 
-ASA API V2.00 / 89.31 的已整理差异见：[89.31_Changes 有效变更审计](asa-api-89.31-changes.md)。
+正常流程只有四步：
 
-建议按以下顺序检查：
+1. 使用目标服务器对应的最新版官方 SDK。
+2. 确保 SDK 头文件和 `AsaApi.lib` 来自同一版本；切换分支后要重新生成库。
+3. Release 编译。
+4. 上服确认插件加载正常，并测试插件实际使用的核心功能。
 
-1. 从插件工程文件确认实际使用的 SDK include 和 library 路径，并记录该 SDK 的 remote、branch、commit 和 dirty 状态。
-2. 注意切换 SDK Git 分支不会自动更新已有 `AsaApi.lib`；先完整 Rebuild 目标分支，再记录库文件时间、大小和 SHA-256，确保头文件与链接库来自同一版本。
-3. 在最新 API 日志中找到服务端 EXE 的 SHA256、缓存文件名，以及 `Failed to get the offset of 'xxx'` 的精确键名。
-4. 核对报错时间、DLL 编译时间和实际上服时间，避免拿旧日志判断新包。
-5. 对比旧头文件与官方当前变更分支，检查插件实际使用的 `NativeCall`、字段访问器、位域、Hook、`StaticClass` / `GetPrivateStaticClass` 和工具函数内部间接调用；不能只检查第一条报错函数。
-6. 从 AsaApi 配置的 `AutomaticCacheDownload.DownloadCacheURL` 下载与 EXE SHA256 对应的 `<hash>.zip`。
-7. 提取插件 DLL 中实际嵌入的 offset / 字段 / 位域键，与缓存包中的 `cached_offsets.txt` 和 `cached_bitfields.cache` 交叉核对。
-8. 如果新头文件声明了缓存中不存在的函数，不要因为“官方头文件能编译”就继续调用；优先查找语义等价、且当前缓存确实存在的官方入口。
-9. 修改后重新编译，再核对 DLL 中旧键已消失、新键存在且能在缓存中命中，最后才进行上服功能测试。
+没有 offset 报错、编译/签名异常或功能异常时，到这里就够了，不必为每个新插件重复做 DLL 与缓存全量审计。
 
-这个检查可以提前发现尚未执行到的功能路径问题，比等待每个功能分别在服务器上触发一次 `Offsets::GetAddress()` 崩溃更完整。
+完整 API 变化清单按 API 版本集中整理一次即可，后续插件直接复用。ASA API V2.00 / 89.31 的整理结果见：[89.31_Changes 有效变更审计](asa-api-89.31-changes.md)。其中 `GetPlayerCharacter()` 改为 `BaseGetPlayerCharacter()` 只是该版本的具体案例，不是日常开发的固定检查中心。
+
+### 异常或高风险发布：按需深入
+
+出现以下情况时，再做完整兼容检查：
+
+- 日志出现 `Failed to get the offset of 'xxx'`。
+- API 大版本刚发布，官方缓存仍可能不完整。
+- 插件只在运行时崩溃或某项功能异常。
+- 删除建筑、修改库存等高风险插件正式发布前，需要额外完整审计。
+- 用户明确要求完整审计。
+
+深度检查顺序：
+
+1. 核对报错时间、DLL 编译时间和实际上服时间，排除旧日志或旧 DLL。
+2. 从工程文件确认实际使用的 SDK include/library 路径、branch、commit 和工作区状态。
+3. 确认 `AsaApi.lib` 已由该 SDK 版本重新生成，避免新头文件链接旧库。
+4. 检查插件实际使用的 `NativeCall`、字段访问器、位域、Hook、`StaticClass` / `GetPrivateStaticClass` 和 helper 间接调用。
+5. 从 API 日志取得服务端 EXE SHA256，并按 `AutomaticCacheDownload.DownloadCacheURL` 下载对应缓存。
+6. 把 DLL 内实际请求键与 `cached_offsets.txt` / `cached_bitfields.cache` 交叉核对。
+7. 若新头文件声明了缓存中不存在的入口，改用语义等价且缓存实际存在的官方入口，再重新编译和上服测试。
 
 ## 无 crash 的无响应
 

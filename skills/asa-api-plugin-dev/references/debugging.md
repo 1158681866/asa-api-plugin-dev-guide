@@ -12,19 +12,38 @@
 
 把栈映射到插件阶段：加载 Hook、命令回调、timer、事件 Hook、资源/库存、通知。
 
-## API 更新后的 offset 全量兼容检查
+## API 更新后的兼容处理
 
-API 刚更新且日志出现 `Failed to get the offset of '具体函数名'` 时：
+### 默认流程：普通新插件或常规升级
 
-- 先固定旧、新 SDK 的 commit，整理一份忽略纯排版后的版本变更清单，至少分类记录：函数签名、字段/位域、`StaticClass`/`StaticStruct`、Hook、核心缓存机制和编译标准。不要直接从单个插件报错反推整个 API 变化。
+正常情况下不要把兼容检查复杂化，按下面做即可：
+
+1. 使用目标服务器对应的最新版官方 SDK。
+2. 确保头文件和 `AsaApi.lib` 来自同一版本；如果只是切换了 SDK 分支，要先重新生成库。
+3. 按新 SDK 要求完成 Release 编译。
+4. 上服确认插件能加载，并测试本插件实际使用的核心功能。
+
+只要没有 offset 报错、编译/签名异常或功能异常，检查到这里就停止。某个 API 版本的完整变化清单只需集中整理一次，之后所有插件复用，不要让每个插件重复分析整套 API。`GetPlayerCharacter()` / `BaseGetPlayerCharacter()` 只是 89.31 迁移案例，不是所有插件都要专门检查的固定项目。
+
+### 何时才做深度检查
+
+仅在以下情况按需做 DLL 与官方缓存的全量对照：
+
+- 日志出现 `Failed to get the offset of '具体函数名'`。
+- API 大版本刚发布，官方缓存仍可能不完整。
+- 插件出现只能在运行时复现的兼容崩溃或功能异常。
+- 删除建筑、修改库存等高风险插件准备正式发布，且需要额外做一次完整兼容审计。
+- 用户明确要求完整兼容审计。
+
+深度检查步骤：
+
 - 先核对报错时间是否早于新版 DLL 的编译/部署时间，避免拿旧日志误判新包。
 - 从插件工程文件确认实际 include 和 link 的 SDK 目录，再记录该 SDK 的 remote、branch、commit 和工作区状态；不要只检查另一个“看起来最新”的 SDK 副本。
-- 切换 SDK 分支只会更新源码和头文件，不会自动重建已有的 `AsaApi.lib`。先用目标分支完整 Rebuild SDK，再记录新库的时间、大小和 SHA-256，确认插件链接的不是旧产物。
-- 对照旧头文件与官方当前变更分支，确认同名 C++ 包装是否已改为调用新的底层函数名。例如旧包装可能直接 `NativeCall` 请求 `AShooterPlayerController.GetPlayerCharacter()`，新包装可能改为转调 `AShooterPlayerController.BaseGetPlayerCharacter()`；这种情况通常需要更新头文件并重新编译，而不是先改业务逻辑。
-- 接口清单不能只围绕第一条报错：同时检查插件实际使用的 `NativeCall`、`xxxField()` / `GetNativePointerField`、BitField、Hook 签名、`StaticClass` / `GetPrivateStaticClass`，以及 AsaApi helper 内部的间接调用。
+- 确认目标分支的 `AsaApi.lib` 已重新生成，并与头文件同源。
+- 检查插件实际使用的 `NativeCall`、`xxxField()` / `GetNativePointerField`、BitField、Hook 签名、`StaticClass` / `GetPrivateStaticClass`，以及 AsaApi helper 内部的间接调用。
 - 编译后搜索 DLL 中实际嵌入的 offset 字符串，确认产物请求的是旧函数还是新函数。
-- 如果 API 日志给出了当前服务端 EXE 的 SHA256，并显示正在读取自动下载缓存，可从 AsaApi 配置中的 `AutomaticCacheDownload.DownloadCacheURL` 取得对应 `<exe-sha256>.zip`。将 DLL 中实际嵌入的 `NativeCall`、字段和位域键，与缓存包的 `cached_offsets.txt` / `cached_bitfields.cache` 交叉核对。
-- “使用新头文件编译成功”不等于运行时兼容。新头文件也可能声明当前缓存没有的函数；这时应改用语义等价且缓存中真实存在的官方入口，重新编译后再次核对 DLL，再做上服测试。
+- 如果 API 日志给出了当前服务端 EXE 的 SHA256，可从 AsaApi 配置中的 `AutomaticCacheDownload.DownloadCacheURL` 取得对应 `<exe-sha256>.zip`，再把 DLL 请求键与 `cached_offsets.txt` / `cached_bitfields.cache` 交叉核对。
+- 若新头文件声明了缓存中不存在的函数，改用语义等价且缓存中真实存在的官方入口，重新编译并上服测试。
 
 ## 无 crash 的无响应或断联
 
