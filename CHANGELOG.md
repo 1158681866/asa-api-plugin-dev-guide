@@ -2,6 +2,7 @@
 
 ## 未发布
 
+- 补充按部落查询 Actor 的接口检查：优先确认当前 SDK 是否提供 `UGameplayStatics::GetAllActorsOfClassInTribe(...)`，同时明确不能仅凭函数名推断内部使用了部落索引，仍需验证当前 API offset 与实际性能。
 - 简化 ASA API 更新后的默认开发流程：普通新插件使用同版本官方 SDK 与 `AsaApi.lib` 完成 Release 编译和核心功能测试即可；完整 API 变化清单每个版本只整理一次，DLL/缓存全量审计仅在 offset 报错、运行异常、缓存不完整或高风险发布等场景按需执行。
 - 新增 ASA API V2.00 / `89.31_Changes` 版本级有效变更审计，集中整理核心缓存机制、C++20、StaticClass/StaticStruct、库存函数签名和当前缓存缺失键，供该版本所有插件复用。
 - 补充 SDK 升级时的头文件 / `AsaApi.lib` 同源校验：切换 Git 分支后需重新生成库；只有进入深度审计时才额外记录时间、大小、哈希和完整接口清单。
