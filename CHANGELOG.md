@@ -2,6 +2,7 @@
 
 ## 未发布
 
+- 补充 SDK 升级时的头文件 / `AsaApi.lib` 同源校验：切换 Git 分支后必须重建库并记录时间、大小与哈希，同时按 NativeCall、字段、位域、Hook、StaticClass 和 helper 间接调用做完整接口清单。
 - 补充 ASA API 更新后的 offset 全量兼容检查：不能只看新头文件是否编译通过，还应把 DLL 实际嵌入的函数、字段和位域键与对应服务端 EXE 的官方缓存交叉核对。
 - 补充大批量 Actor 跨 Tick 清理稳定性规则：不要长期保存裸 `AActor*`；按 ASA API Wiki 使用 `GetWeakReference(actor)` 保存 `TWeakObjectPtr<AActor>`，处理前再 `weak.Get()`，并重新校验归属。
 - 调整 `config说明.json` 发布标准：可使用字段表或 JSONC 短注释样例；面向小白服主时优先紧凑短注释，避免强制大段字段表。

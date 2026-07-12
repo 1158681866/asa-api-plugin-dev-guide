@@ -26,13 +26,15 @@ ASA API 更新后，单纯换头文件并成功编译只能证明 C++ 签名可�
 
 建议按以下顺序检查：
 
-1. 在最新 API 日志中找到服务端 EXE 的 SHA256、缓存文件名，以及 `Failed to get the offset of 'xxx'` 的精确键名。
-2. 核对报错时间、DLL 编译时间和实际上服时间，避免拿旧日志判断新包。
-3. 对比旧头文件与官方当前变更分支，检查插件实际使用的 `NativeCall`、字段访问器、位域、Hook 和工具函数内部间接调用。
-4. 从 AsaApi 配置的 `AutomaticCacheDownload.DownloadCacheURL` 下载与 EXE SHA256 对应的 `<hash>.zip`。
-5. 提取插件 DLL 中实际嵌入的 offset / 字段 / 位域键，与缓存包中的 `cached_offsets.txt` 和 `cached_bitfields.cache` 交叉核对。
-6. 如果新头文件声明了缓存中不存在的函数，不要因为“官方头文件能编译”就继续调用；优先查找语义等价、且当前缓存确实存在的官方入口。
-7. 修改后重新编译，再核对 DLL 中旧键已消失、新键存在且能在缓存中命中，最后才进行上服功能测试。
+1. 从插件工程文件确认实际使用的 SDK include 和 library 路径，并记录该 SDK 的 remote、branch、commit 和 dirty 状态。
+2. 注意切换 SDK Git 分支不会自动更新已有 `AsaApi.lib`；先完整 Rebuild 目标分支，再记录库文件时间、大小和 SHA-256，确保头文件与链接库来自同一版本。
+3. 在最新 API 日志中找到服务端 EXE 的 SHA256、缓存文件名，以及 `Failed to get the offset of 'xxx'` 的精确键名。
+4. 核对报错时间、DLL 编译时间和实际上服时间，避免拿旧日志判断新包。
+5. 对比旧头文件与官方当前变更分支，检查插件实际使用的 `NativeCall`、字段访问器、位域、Hook、`StaticClass` / `GetPrivateStaticClass` 和工具函数内部间接调用；不能只检查第一条报错函数。
+6. 从 AsaApi 配置的 `AutomaticCacheDownload.DownloadCacheURL` 下载与 EXE SHA256 对应的 `<hash>.zip`。
+7. 提取插件 DLL 中实际嵌入的 offset / 字段 / 位域键，与缓存包中的 `cached_offsets.txt` 和 `cached_bitfields.cache` 交叉核对。
+8. 如果新头文件声明了缓存中不存在的函数，不要因为“官方头文件能编译”就继续调用；优先查找语义等价、且当前缓存确实存在的官方入口。
+9. 修改后重新编译，再核对 DLL 中旧键已消失、新键存在且能在缓存中命中，最后才进行上服功能测试。
 
 这个检查可以提前发现尚未执行到的功能路径问题，比等待每个功能分别在服务器上触发一次 `Offsets::GetAddress()` 崩溃更完整。
 
