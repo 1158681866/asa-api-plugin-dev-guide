@@ -12,6 +12,16 @@
 
 把栈映射到插件阶段：加载 Hook、命令回调、timer、事件 Hook、资源/库存、通知。
 
+## API 更新后的 offset 全量兼容检查
+
+API 刚更新且日志出现 `Failed to get the offset of '具体函数名'` 时：
+
+- 先核对报错时间是否早于新版 DLL 的编译/部署时间，避免拿旧日志误判新包。
+- 对照旧头文件与官方当前变更分支，确认同名 C++ 包装是否已改为调用新的底层函数名。例如旧包装可能直接 `NativeCall` 请求 `AShooterPlayerController.GetPlayerCharacter()`，新包装可能改为转调 `AShooterPlayerController.BaseGetPlayerCharacter()`；这种情况通常需要更新头文件并重新编译，而不是先改业务逻辑。
+- 编译后搜索 DLL 中实际嵌入的 offset 字符串，确认产物请求的是旧函数还是新函数。
+- 如果 API 日志给出了当前服务端 EXE 的 SHA256，并显示正在读取自动下载缓存，可从 AsaApi 配置中的 `AutomaticCacheDownload.DownloadCacheURL` 取得对应 `<exe-sha256>.zip`。将 DLL 中实际嵌入的 `NativeCall`、字段和位域键，与缓存包的 `cached_offsets.txt` / `cached_bitfields.cache` 交叉核对。
+- “使用新头文件编译成功”不等于运行时兼容。新头文件也可能声明当前缓存没有的函数；这时应改用语义等价且缓存中真实存在的官方入口，重新编译后再次核对 DLL，再做上服测试。
+
 ## 无 crash 的无响应或断联
 
 如果服务器进程还在但客户端超时：
