@@ -48,7 +48,7 @@ MAJOR.MINOR.PATCH
 
 - 文件名不重复版本号、作者、`Release`、日期或临时后缀；更新时以同名正式包替换旧包。
 - 版本号以 `PluginInfo.Version`（必须是 JSON number）为准，AsaApi 会在加载日志中显示；`RELEASE_MANIFEST.txt` 同时记录版本、生成时间和文件哈希。
-- `PluginInfo.Description` 使用完整介绍格式：`展示名 核心功能，飞升，作者署名[，QQ 公开号码]`，例如 `ICEASAJumper 玛娜无限跳 无限冲刺，飞升，作者ICEFIELD，QQ 2601946620`；不要在 Description 再次重复版本号，QQ 仅在作者明确要求公开时写入。
+- `PluginInfo.Description` 使用字段分隔格式：`展示名 · 核心功能 · 作者：署名[ · QQ：公开号码]`，例如 `PluginName · 核心功能说明 · 作者：示例作者 · QQ：123456789`；不要在 Description 再次重复版本号。QQ 仅在作者明确要求公开且发布前确认其不与本机凭据、Token 等敏感值相同时写入，不能为保留联系方式而放宽泄漏检查。
 - 包内的文件夹、DLL 和 `PluginInfo.FullName` 继续使用稳定英文内部标识，不因公开包名而改动。
 
 测试包或内部归档可以带时间：
