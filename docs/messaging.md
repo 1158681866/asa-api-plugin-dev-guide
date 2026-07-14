@@ -51,6 +51,14 @@
 
 如果目标是普通插件聊天行，优先评估 `SendChatMessage`。如果目标是服务器系统消息，评估 `SendServerMessage`。如果目标是屏幕浮动提示，评估 `SendNotification`。如果使用 `ClientServerChatDirectMessage`，发布前要截图确认它在目标服务器上的实际样式。
 
+## 聊天命令与普通聊天的边界
+
+- 正式聊天命令使用 `AddChatCommand` / `RemoveChatCommand`，不要用 `AddOnChatMessageCallback` 手工解析来代替。
+- 正式命令命中后，AsaApi 会阻止原消息进入游戏聊天广播，并让后续聊天观察回调收到 `command_executed=true`。
+- 通用聊天回调适合观察、过滤或修改普通聊天。它返回 `true` 虽能阻止游戏默认广播，但所有观察回调仍会执行；其他聊天插件可能在消息未被标记为正式命令时先记录或转发。
+- 动态重载命令别名时，把注销和重新注册延迟到下一 tick/timer，不要在当前聊天命令回调中直接修改命令容器。
+- 上服验收要让第二名玩家确认命令文本不可见。只有发送者看见时先排除客户端本地回显；其他玩家也能看到时再排查主动重发消息的聊天插件。
+
 ## 配置建议
 
 ```json

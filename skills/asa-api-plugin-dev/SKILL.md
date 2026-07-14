@@ -46,6 +46,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 
 ## 工程判断
 
+- 玩家输入的正式聊天命令必须优先使用 `AddChatCommand` / `RemoveChatCommand` 注册与注销，不得用 `AddOnChatMessageCallback` 手工解析来代替。正式命令命中后应由 AsaApi 阻止原消息广播，并让其他聊天观察插件收到 `command_executed=true`；通用聊天回调只用于普通聊天的观察、过滤或修改。动态重载命令别名时，不要在当前聊天命令回调栈内直接删改命令容器，应延迟到下一 tick/timer。
 - 大范围扫描、高频全局 Hook、脚本派发、状态同步、setter 等做法需要说明业务必要性、触发频率、范围限制、可观测日志和回滚方式。
 - 定时器任务如果也能被 RCON/控制台手动触发，必须考虑重入/并发执行。对会遍历全图、写审计表、Destroy Actor、发奖励、改权限或改数据库状态的任务，稳定写法是在任务入口加互斥/运行中标记，并在 Status 或日志里暴露 running/skipped 状态，避免重复执行导致重复清理、重复发放或任务状态混乱。
 - 不靠猜测确定游戏对象路径、Outer 链、脚本派发、状态同步、setter 等调用链；不确定时先查官方文档 / wiki。Wiki 够用就停止，只有缺资料或编译对不上才查 SDK。

@@ -42,6 +42,7 @@
 
 ## 工程判断
 
+- 正式聊天命令必须用 `AddChatCommand` / `RemoveChatCommand` 注册与注销，不得用 `AddOnChatMessageCallback` 手工解析代替；命令别名热重载时，延迟到下一 tick/timer 再修改命令容器。
 - 大范围扫描、高频全局 Hook、脚本派发、状态同步、setter 等做法需要说明业务必要性、触发频率、范围限制、可观测日志和回滚方式。
 - 不靠猜测确定游戏对象路径、Outer 链、脚本派发、状态同步、setter 等调用链；不确定时先查官方文档 / ASA API Wiki。Wiki 缺资料、疑似过期或编译对不上时，再查 SDK 或现有项目代码。
 - Hook 签名、字段名、封装函数要标明确认来源；优先来源是官方文档 / ASA API Wiki，本地 SDK 只用于补缺或解决编译/签名不一致。
