@@ -84,6 +84,9 @@
 - `MinApiVersion` 必须是 JSON number，不能缺失或写成字符串；缺失时 AsaApi 可能在 `PluginManager::ReadPluginInfo` / `LoadAllPlugins` 阶段报 `type must be number, but is null`。
 - 如果启动日志出现 `[json.exception.type_error.302] type must be number, but is string/null`，优先检查各插件包的 `PluginInfo.json` 里的 `Version` 和 `MinApiVersion`。
 - `Name`、`FriendlyName`、`Authors` 这类自定义字段不要替代 `FullName`、`Version`、`MinApiVersion`；需要保留时也应同时保留 AsaApi 标准字段。
+- `FullName` 是包内文件夹、DLL 和加载/卸载命令所依赖的稳定英文标识，不因公开中文包名、作者显示或版本展示而随意改名。
+- 固定中文展示名的公开发行包可使用 `<中文插件名>.zip`，例如 `飞升部落清理插件.zip`；版本号和作者不写入文件名，分别由 `Version`、`RELEASE_MANIFEST.txt` 和加载日志确认。
+- `Description` 可采用 `<中文插件名> · by <中文署名>`，例如 `飞升部落清理插件 · by 未存`。AsaApi 的加载日志会自动组合为 `Loaded plugin <FullName> V<Version> (<Description>)`，不要在 `Description` 重复写版本号。
 
 ## 测试
 
@@ -104,6 +107,8 @@
 ```
 
 如果切换到较新的 AsaApi SDK 后，头文件编译报 `std::string_view::starts_with` 不存在、`FindScriptStruct` 附近模板 `>>` 语法错误等 C++ 标准相关错误，优先检查工程的 `<LanguageStandard>`。AsaApi 89.31/V2.00 一类新头文件可能需要 C++20，应将插件工程和测试工程从 `stdcpp17` 升到 `stdcpp20` 后重新 Release 编译；这属于编译标准兼容调整，不代表业务函数本身一定失效。
+
+如果当前 SDK 的 `UnrealString.h` 报 `fmt/format.h` 缺失，不要随便引用机器上另一个 vcpkg 的 fmt。先检查该 SDK 自己的 `AsaApi/vcpkg_installed/<triplet>/<triplet>/include` 与 `lib`，把实际存在的 include/lib 目录加入插件工程，并在需要时链接同一套 `fmt.lib`。triplet 名称可能随 SDK/toolset 改变，必须以本地目录为准。编译后用 `dumpbin /DEPENDENTS` 确认发布 DLL 没意外增加未打包的 `fmt.dll` 或其他运行时依赖。
 
 如果项目有测试 exe，编译后运行。
 

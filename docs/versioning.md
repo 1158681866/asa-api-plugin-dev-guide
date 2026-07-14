@@ -39,14 +39,19 @@ MAJOR.MINOR.PATCH
 
 ## 发布包命名
 
-推荐：
+面向服主的正式公开包，默认使用稳定的中文展示名：
 
 ```text
-PluginName-v0.1.0.zip
-PluginName-v0.1.1-hotfix.zip
+中文插件名.zip
+飞升部落清理插件.zip
 ```
 
-测试包可以带时间：
+- 文件名不重复版本号、作者、`Release`、日期或临时后缀；更新时以同名正式包替换旧包。
+- 版本号以 `PluginInfo.Version`（必须是 JSON number）为准，AsaApi 会在加载日志中显示；`RELEASE_MANIFEST.txt` 同时记录版本、生成时间和文件哈希。
+- `PluginInfo.Description` 可写为 `中文插件名 · by 中文署名`，例如 `飞升部落清理插件 · by 未存`；不要在 Description 再次重复版本号。
+- 包内的文件夹、DLL 和 `PluginInfo.FullName` 继续使用稳定英文内部标识，不因公开包名而改动。
+
+测试包或内部归档可以带时间：
 
 ```text
 PluginName-test-20260623-1720.zip
