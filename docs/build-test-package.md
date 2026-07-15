@@ -23,6 +23,17 @@
 & "<VS>\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe" ".\\plugin.sln" /p:Configuration=Release /p:Platform=x64
 ```
 
+自动化脚本不要假设开发机一定安装 Visual Studio Community。使用 `vswhere.exe` 同时兼容 Community、Enterprise、Professional 和 Build Tools：
+
+```powershell
+$vswhere = "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe"
+$msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild -find "MSBuild\\**\\Bin\\amd64\\MSBuild.exe" |
+    Select-Object -First 1
+& $msbuild ".\\plugin.sln" /p:Configuration=Release /p:Platform=x64
+```
+
+如果 `package.ps1` 含中文并由 Windows PowerShell 5.1 执行，保存为 UTF-8 BOM，并用 `powershell.exe -File .\\package.ps1` 做一次真实验证。无 BOM UTF-8 脚本可能在 `pwsh` 中正常，却在 Windows PowerShell 中出现中文乱码或字符串终止符解析错误。
+
 切换 AsaApi SDK 分支后，如果头文件开始报 C++ 标准相关错误，例如 `std::string_view::starts_with` 不存在，或 `FindScriptStruct` 附近出现模板 `>>` 语法错误，先检查工程文件里的 `<LanguageStandard>`。较新的 AsaApi SDK 可能需要 C++20，把插件工程和测试工程从 `stdcpp17` 调整到 `stdcpp20` 后再重新编译。这个现象通常说明编译标准不够新，不等于某个业务 Hook 或字段已经失效。
 
 ## 测试

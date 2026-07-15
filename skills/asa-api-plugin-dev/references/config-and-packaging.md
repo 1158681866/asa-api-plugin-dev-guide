@@ -106,6 +106,16 @@
 & "<VS>\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe" "<plugin>.sln" /p:Configuration=Release /p:Platform=x64
 ```
 
+不要在打包脚本里固定写死 `Community`、`Enterprise` 或 `BuildTools` 安装目录。优先用 Visual Studio Installer 自带的 `vswhere.exe` 查找当前机器真实的 x64 MSBuild：
+
+```powershell
+$vswhere = "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe"
+$msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild -find "MSBuild\\**\\Bin\\amd64\\MSBuild.exe" |
+    Select-Object -First 1
+```
+
+带中文字符串的 `.ps1` 如果会由 Windows PowerShell 5.1 的 `powershell.exe -File` 执行，应保存为 UTF-8 BOM（或明确使用兼容编码），并用 `powershell.exe` 实际跑一次打包脚本。只在 PowerShell 7 / `pwsh` 中解析通过，不能证明 Windows PowerShell 不会因无 BOM 把中文解码成乱码，甚至在引号附近触发解析错误。
+
 如果切换到较新的 AsaApi SDK 后，头文件编译报 `std::string_view::starts_with` 不存在、`FindScriptStruct` 附近模板 `>>` 语法错误等 C++ 标准相关错误，优先检查工程的 `<LanguageStandard>`。AsaApi 89.31/V2.00 一类新头文件可能需要 C++20，应将插件工程和测试工程从 `stdcpp17` 升到 `stdcpp20` 后重新 Release 编译；这属于编译标准兼容调整，不代表业务函数本身一定失效。
 
 如果当前 SDK 的 `UnrealString.h` 报 `fmt/format.h` 缺失，不要随便引用机器上另一个 vcpkg 的 fmt。先检查该 SDK 自己的 `AsaApi/vcpkg_installed/<triplet>/<triplet>/include` 与 `lib`，把实际存在的 include/lib 目录加入插件工程，并在需要时链接同一套 `fmt.lib`。triplet 名称可能随 SDK/toolset 改变，必须以本地目录为准。编译后用 `dumpbin /DEPENDENTS` 确认发布 DLL 没意外增加未打包的 `fmt.dll` 或其他运行时依赖。

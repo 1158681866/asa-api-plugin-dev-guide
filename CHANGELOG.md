@@ -2,6 +2,7 @@
 
 ## 未发布
 
+- 补充 Windows 构建脚本兼容规则：通过 `vswhere.exe` 查找真实 MSBuild，避免写死 Community/BuildTools 路径；含中文且由 Windows PowerShell 5.1 执行的 `.ps1` 使用 UTF-8 BOM，并以 `powershell.exe -File` 实测。
 - 补充聊天命令基础规则：正式命令必须通过 `AddChatCommand` 注册，不能用普通聊天监听手工解析代替；增加 `command_executed`、其他聊天插件转发风险、别名延迟重载和双玩家上服验收说明。
 - 补充公开发布包凭据脱敏规则：实际部署文件夹可保留本机配置，但 ZIP 必须通过临时 staging 副本替换占位符、重建 manifest，并由验证脚本阻止真实数据库凭据泄漏。
 - 补充大型 Actor 队列排序性能规则：排序前一次性缓存位置/高度等排序键，禁止在比较器里反复访问弱引用、Actor位置或反射字段。
