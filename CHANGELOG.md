@@ -2,10 +2,11 @@
 
 ## 未发布
 
+- 简化公开发布包：删除包内自定义发布清单要求；版本以 `PluginInfo.Version` 为准，ZIP/DLL SHA256 和验证结果改为包外记录。
 - 收紧 Release DLL 发布门禁：正式发布优先强制重建；仅做新鲜度检查时纳入项目构建元数据，并检查 CodeView/RSDS PDB 记录与 ZIP staging，阻止旧 DLL 和本机绝对路径泄漏。
 - 补充 Windows 构建脚本兼容规则：通过 `vswhere.exe` 查找真实 MSBuild，避免写死 Community/BuildTools 路径；含中文且由 Windows PowerShell 5.1 执行的 `.ps1` 使用 UTF-8 BOM，并以 `powershell.exe -File` 实测。
 - 补充聊天命令基础规则：正式命令必须通过 `AddChatCommand` 注册，不能用普通聊天监听手工解析代替；增加 `command_executed`、其他聊天插件转发风险、别名延迟重载和双玩家上服验收说明。
-- 补充公开发布包凭据脱敏规则：实际部署文件夹可保留本机配置，但 ZIP 必须通过临时 staging 副本替换占位符、重建 manifest，并由验证脚本阻止真实数据库凭据泄漏。
+- 补充公开发布包凭据脱敏规则：实际部署文件夹可保留本机配置，但 ZIP 必须通过临时 staging 副本替换占位符并重新校验，由验证脚本阻止真实数据库凭据泄漏。
 - 补充大型 Actor 队列排序性能规则：排序前一次性缓存位置/高度等排序键，禁止在比较器里反复访问弱引用、Actor位置或反射字段。
 - 补充按部落查询 Actor 的接口检查：优先确认当前 SDK 是否提供 `UGameplayStatics::GetAllActorsOfClassInTribe(...)`，同时明确不能仅凭函数名推断内部使用了部落索引，仍需验证当前 API offset 与实际性能。
 - 简化 ASA API 更新后的默认开发流程：普通新插件使用同版本官方 SDK 与 `AsaApi.lib` 完成 Release 编译和核心功能测试即可；完整 API 变化清单每个版本只整理一次，DLL/缓存全量审计仅在 offset 报错、运行异常、缓存不完整或高风险发布等场景按需执行。
