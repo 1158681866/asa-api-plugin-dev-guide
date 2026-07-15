@@ -86,7 +86,7 @@
 - `Name`、`FriendlyName`、`Authors` 这类自定义字段不要替代 `FullName`、`Version`、`MinApiVersion`；需要保留时也应同时保留 AsaApi 标准字段。
 - `FullName` 是包内文件夹、DLL 和加载/卸载命令所依赖的稳定英文标识，不因公开中文包名、作者显示或版本展示而随意改名。
 - 固定中文展示名的公开发行包可使用 `<中文插件名>.zip`，例如 `飞升部落清理插件.zip`；版本号和作者不写入文件名，分别由 `Version`、`RELEASE_MANIFEST.txt` 和加载日志确认。
-- `Description` 使用字段分隔格式：`<展示名> · <核心功能> · 作者：<署名>[ · QQ：<公开号码>]`。例如 `PluginName · 核心功能说明 · 作者：示例作者 · QQ：123456789`。AsaApi 的加载日志会自动组合为 `Loaded plugin <FullName> V<Version> (<Description>)`，不要在 `Description` 重复写版本号；QQ 仅在作者明确要求公开且发布前确认其不与本机凭据、Token 等敏感值相同时写入，不能为保留联系方式而放宽泄漏检查。
+- `Description` 使用字段分隔格式：`<展示名> · <核心功能> · 作者：<署名>[ · QQ：<公开号码>]`。默认示例为 `PluginName · 核心功能说明 · 作者：示例作者`；只有作者明确要求公开时才追加 QQ。AsaApi 的加载日志会自动组合为 `Loaded plugin <FullName> V<Version> (<Description>)`，不要在 `Description` 重复写版本号。发布前必须确认 QQ 不与本机凭据、Token 等敏感值冲突；若冲突，应改用其他联系方式或先更换真实凭据，不能为保留联系方式而放宽泄漏检查。
 
 ## 测试
 
