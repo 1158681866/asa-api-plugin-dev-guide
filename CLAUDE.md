@@ -13,6 +13,7 @@ This repository is not a server plugin and not a buildable plugin by itself. It 
 - Evaluate event Hooks, timers, scans, direct object fields, native calls, and global Hooks by business need, frequency, scope, observability, and rollback path.
 - Avoid presenting project-specific incidents or unverified assumptions as general ASA API rules.
 - Keep changes scoped and update code, config, tests, docs, and package output together.
+- When Permissions/VIP groups need different prices, cooldowns, quotas, rewards, or protections, prefer an ordinary-user default plus structured group rules with explicit unique priorities. Resolve multi-group membership by highest priority, keep access separate from benefits/pricing, and reject ambiguous rules instead of adding separate one-off group fields for each benefit.
 - Treat `build/package/<Plugin>/` as a local test directory. It may retain README/changelog copies and local configuration. Only the final external ZIP is distribution-grade: build it from a temporary staging directory or an explicit ZIP whitelist, include only the plugin DLL, `PluginInfo.json`, `config.json`, `config说明.json`, and required runtime files, and exclude developer docs without deleting them from the source tree or local test directory.
 - If the server is not local, do not claim server-side validation. Report local build/test/package results and list what must be checked on the server.
 
