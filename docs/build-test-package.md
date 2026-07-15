@@ -71,7 +71,7 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 
 - ZIP 已更新，且只包含 DLL、`PluginInfo.json`、`config.json`、`config说明.json` 和确属运行必需的额外文件；每个额外文件都能说明运行依赖原因。
 - `README.md`、`CHANGELOG.md` 和纯开发示例未进入 ZIP。
-- `config说明.json` 覆盖全部公开字段，使用正式、简明中文说明用途、单位/范围和关键行为；默认有简短插件信息对象，包含 `plugins.load <FullName>`、`plugins.unload <FullName>` 和配置重载。默认检查插件信息和配置项说明前各有一个简短分隔标题，用户明确不要时除外；仍不应包含联系方式、完整命令列表或长注意事项，也不重复完整英文路径。
+- `config说明.json` 覆盖全部公开字段，使用正式、简明中文说明用途、单位/范围和关键行为；默认有简短插件信息对象，字段名明确为 `插件加载命令`、`插件卸载命令`、`配置重载命令`，内容分别包含 `plugins.load <FullName>`、`plugins.unload <FullName>` 和配置重载。默认检查插件信息和配置项说明前各有一个简短分隔标题，用户明确不要时除外；仍不应包含联系方式、完整命令列表或长注意事项，也不重复完整英文路径。
 - 对外 ZIP 仅对真实敏感字段使用 `YOUR_*` 脱敏占位符；普通配置保留可读案例值。
 - 白名单/黑名单、奖励、权限名单、Webhook 等会生效的示例数据只放在 `config说明.json`，正式 `config.json` 保持空列表、关闭或无目标等安全默认值。
 
