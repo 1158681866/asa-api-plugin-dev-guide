@@ -26,7 +26,9 @@
 - [ ] Release 编译通过。
 - [ ] core tests 通过。
 - [ ] 包目录已刷新。
-- [ ] DLL 时间是最新。
+- [ ] 正式发布 DLL 来自本次 `Release|x64` 重建；若复用既有 DLL，新鲜度门禁已覆盖源码、`.sln/.vcxproj` 和项目自定义 `.props/.targets`。
+- [ ] 包内 DLL 的 `Format: RSDS` 未泄露盘符、UNC、用户目录等本机 PDB 路径，ZIP staging 的已知本机路径扫描无命中。
+- [ ] DLL 时间是本次构建时间。
 
 ## 文档
 

@@ -36,6 +36,12 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 
 切换 AsaApi SDK 分支后，如果头文件开始报 C++ 标准相关错误，例如 `std::string_view::starts_with` 不存在，或 `FindScriptStruct` 附近出现模板 `>>` 语法错误，先检查工程文件里的 `<LanguageStandard>`。较新的 AsaApi SDK 可能需要 C++20，把插件工程和测试工程从 `stdcpp17` 调整到 `stdcpp20` 后再重新编译。这个现象通常说明编译标准不够新，不等于某个业务 Hook 或字段已经失效。
 
+### Release DLL 新鲜度与 PDB 路径
+
+正式发布优先在打包前执行一次 `Release|x64` 的 `Rebuild`，成功后再复制本次构建输出的 DLL。若打包脚本复用已有 DLL 并只做时间新鲜度检查，输入不能只包含 `.cpp/.h`；至少还要包含 `.sln/.vcxproj` 以及实际参与本项目构建的自定义 `.props/.targets`。任一输入比 DLL 新时必须拒绝打包，避免编译标准、链接选项或依赖路径已经变化，却仍复制旧 DLL。
+
+即使发布包不包含 `.pdb`，MSVC 生成的 DLL 仍可能在 PE CodeView/RSDS 记录中保存完整 PDB 路径。Release 链接应让该记录只保留文件名或其他非本机路径，例如使用 `/PDBALTPATH:%_PDB%`。打包后应对实际包内 DLL 执行 `dumpbin /headers` 检查 `Format: RSDS`，并扫描 ZIP staging 或解压内容中的已知用户目录、项目根目录和 SDK 根目录；出现盘符绝对路径、UNC 路径或本机路径片段时拒绝发布。
+
 ## 测试
 
 如果有测试 exe：
@@ -59,7 +65,7 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 - `PluginInfo.json`
 - `config.json`
 - `config说明.json`
-- `config说明.json` 是否按完整配置树展示全部公开字段，使用正式、简明中文说明用途、单位/范围和关键行为，且不重复完整英文路径。
+- `config说明.json` 是否覆盖全部公开字段，使用正式、简明中文说明用途、单位/范围和关键行为；可选有一个简短插件信息/重载对象。分隔标题只在用户明确要求时允许，仍不应包含联系方式或长注意事项，也不重复完整英文路径。
 - `README.md` 可选；如存在，要和当前行为一致
 - zip 是否更新
 - 对外 ZIP 仅对真实敏感字段使用 `YOUR_*` 脱敏占位符；普通配置保留可读案例值。

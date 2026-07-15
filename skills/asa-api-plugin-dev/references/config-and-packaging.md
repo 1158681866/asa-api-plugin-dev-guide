@@ -14,16 +14,19 @@
 - 内部技术参数、临时排错参数、错误配置后风险较高的参数不默认暴露；需要暴露时写清安全范围。
 - 发布包应包含根目录 `config.json` 和 `config说明.json`。
 - `README.md` 可选。
-- `config.json` 是插件读取的严格 JSON；`config说明.json` 负责写字段用途、默认值、倍率/概率/时间计算示例、重载命令和注意事项。
+- `config.json` 是插件读取的严格 JSON；`config说明.json` 只负责解释公开字段的用途、默认值、单位/范围、可选值和必要风险。可选在文件开头加一个简短“插件信息”对象，补充名称、内部标识、版本、作者、运行配置和单条重载方式，版本必须与 `PluginInfo.Version` 一致；其他安装流程、固定行为和上服验证放在 `README.md` 或项目文档。
 - `config说明.json` 不要写成简单 key-value 说明对象。可按项目需要选择字段表式结构或 JSONC 短注释样例；面向小白服主时优先使用接近 ArkShop 的紧凑 JSONC 排版。
 - 字段表式 `config说明.json` 推荐结构：
 
 ```json
 {
-  "ConfigFormatVersion": 1,
-  "Plugin": "PluginName",
-  "说明": "本文件只用于说明 config.json 字段含义，插件运行只读取 config.json。",
-  "字段": {
+  "插件信息": {
+    "名称": "PluginName",
+    "版本": "1.0",
+    "运行配置": "config.json",
+    "重载方式": "PluginName.Reload"
+  },
+  "配置项": {
     "Enabled": {
       "类型": "bool",
       "默认值": true,
@@ -42,19 +45,20 @@
       "单位": "秒",
       "说明": "任务间隔。"
     }
-  },
-  "命令示例": [],
-  "上服验证顺序": []
+  }
 }
 ```
 
 - 无论使用字段表还是 JSONC 短注释样例，每个公开运行配置字段都要能看懂中文含义；数字写单位/建议范围；枚举/模式写可选值和取值含义；危险开关写建议或注意。
-- `config.json`、代码默认值、`config说明.json` 三者字段必须一致。新增、删除、重命名配置时必须同步更新三处。
+- `config说明.json` 的“配置项”对象（或 JSONC 配置树）必须覆盖 `config.json` 的全部公开字段；新增、删除、重命名配置时必须同步更新代码默认值、`config.json` 和说明文件。
 
 ### `config说明.json` 格式规则
 
 - 优先按完整配置树编写紧凑 JSONC 样例：键、对象层级和公开字段顺序应与 `config.json` 一致，说明只写在同一行或紧邻行，方便服主对照修改。
 - 中文说明使用正式、简明的运维语气。每项至少交代用途；数值补单位、有效范围和默认/常用值；开关补关键行为；列表补填写格式。不要只写“开启/关闭”，也不要把配置文件写成大段教程。
+- 普通数值范围用“不能小于 0”“必须大于 0”等中文表述，不在面向服主的配置说明中直接使用 `>= 0`、`> 0` 等数学符号；公式和代码示例除外。
+- 可以保留一个简短的“插件信息”对象和一条重载方式。默认不加装饰分隔键；用户明确要求时，可只为指定区域加少量分隔标题。仍不要添加联系方式、命令列表、固定安全规则、安装教程、上服验证和底部长注意事项。
+- 样式参考只适用于用户明确指定的区域。如果用户只要求学习“插件信息”写法，必须保留原有配置项的结构、顺序、默认值和注释风格，不得在 JSONC 与字段表之间自行转换。
 - 注释不重复 `Database.Host`、`Targets.Structures` 这类完整英文路径，字段层级已经表达位置；用自然中文描述字段作用即可。
 - 列表、权限组和嵌套对象需要直观展示时可分行排版；示例项在 `config说明.json` 中标注“示例”，正式 `config.json` 仍遵循安全运行默认值。
 
@@ -85,7 +89,7 @@
 - 如果启动日志出现 `[json.exception.type_error.302] type must be number, but is string/null`，优先检查各插件包的 `PluginInfo.json` 里的 `Version` 和 `MinApiVersion`。
 - `Name`、`FriendlyName`、`Authors` 这类自定义字段不要替代 `FullName`、`Version`、`MinApiVersion`；需要保留时也应同时保留 AsaApi 标准字段。
 - `FullName` 是包内文件夹、DLL 和加载/卸载命令所依赖的稳定英文标识，不因公开中文包名、作者显示或版本展示而随意改名。
-- 固定中文展示名的公开发行包可使用 `<中文插件名>.zip`，例如 `飞升部落清理插件.zip`；版本号和作者不写入文件名，分别由 `Version`、`RELEASE_MANIFEST.txt` 和加载日志确认。
+- 固定中文展示名的公开发行包可使用 `<中文插件名>.zip`，例如 `飞升部落清理插件.zip`；版本号和作者不写入文件名，版本由 `Version` 和加载日志确认，ZIP/DLL SHA256 和验证结果在包外发布记录或交付说明中保留。
 - `Description` 使用字段分隔格式：`<展示名> · <核心功能> · 作者：<署名>[ · QQ：<公开号码>]`。默认示例为 `PluginName · 核心功能说明 · 作者：示例作者`；只有作者明确要求公开时才追加 QQ。AsaApi 的加载日志会自动组合为 `Loaded plugin <FullName> V<Version> (<Description>)`，不要在 `Description` 重复写版本号。发布前必须确认 QQ 不与本机凭据、Token 等敏感值冲突；若冲突，应改用其他联系方式或先更换真实凭据，不能为保留联系方式而放宽泄漏检查。
 
 ## 测试
@@ -127,13 +131,15 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 如果有打包脚本，执行打包脚本。随后检查：
 
 - 包目录存在。
-- DLL 时间是新的。
+- 正式发布优先执行 `Release|x64` 重建；若只做新鲜度门禁，除源码外还要覆盖 `.sln/.vcxproj` 和参与构建的项目自定义 `.props/.targets`，任一输入较新时拒绝打包。
+- 对实际包内 DLL 执行 `dumpbin /headers`，确认 `Format: RSDS` 不含本机绝对 PDB 路径；同时扫描 ZIP staging 中的用户目录、项目根目录和 SDK 根目录片段。
+- DLL 时间是本次构建时间。
 - 包内配置是预期配置。
 - `PluginInfo.json` 存在。
 - `PluginInfo.json` 是合法 JSON，且 `Version`、`MinApiVersion` 都是 number。
 - `config.json` 和 `config说明.json` 存在。
 - 如项目包含 `README.md`，内容与当前行为一致。
-- `config说明.json` 可以是合法 JSON 字段表，也可以是带 `//` 注释的 JSONC 样例；发布检查应确认它明确写着“插件不读取，真正生效的是 config.json”，并覆盖公开配置字段。
+- `config说明.json` 可以是合法 JSON 字段表，也可以是带 `//` 注释的 JSONC 样例；发布检查应允许一个简短的插件信息对象，同时拒绝装饰键和额外的通用说明块。
 - 对外 ZIP 的检查要区分“说明示例”和“运行值”：仅敏感字段使用脱敏占位符；会生效的示例 ID/名单不得写进正式 `config.json`。
 - 打包脚本处理中文文件名时优先使用 `-LiteralPath`，并显式检查 `config说明.json` 这个最终文件名；不要只看控制台乱码输出。
 - 清理旧 release 目录前必须解析并校验目标路径确实位于项目自己的 release 子目录下，避免误删，同时避免旧包残留伪造出“打包成功”。
