@@ -13,6 +13,7 @@ This repository is not a server plugin and not a buildable plugin by itself. It 
 - Evaluate event Hooks, timers, scans, direct object fields, native calls, and global Hooks by business need, frequency, scope, observability, and rollback path.
 - Avoid presenting project-specific incidents or unverified assumptions as general ASA API rules.
 - Keep changes scoped and update code, config, tests, docs, and package output together.
+- Keep README and changelog files in the source repository for developers. Standard public packages exclude them and contain only the plugin DLL, `PluginInfo.json`, `config.json`, `config说明.json`, and files that are actually required at runtime.
 - If the server is not local, do not claim server-side validation. Report local build/test/package results and list what must be checked on the server.
 
 ## Reference Docs

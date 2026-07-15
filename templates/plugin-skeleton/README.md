@@ -11,8 +11,10 @@ plugin-name/
 ├── config
 ├── tests
 ├── PluginInfo.json
+├── config.json
+├── config说明.json
 ├── package.ps1
-└── README.md
+└── README.md        # 开发者/维护文档，不进标准公开包
 ```
 
 此模板只提供目录思路，不包含可直接编译的 C++ 代码。
@@ -38,7 +40,9 @@ ArkApi/Plugins/PluginName/
 PluginName.dll
 PluginInfo.json
 config.json
-README.md
+config说明.json
 ```
 
-如果提供带注释配置，请明确它只给人阅读，插件运行时读取 `config.json`。
+标准公开包默认只包含上述四类文件。只有 `.dll.arkapi`、附属运行库、签名或数据文件等确属运行必需时才额外加入。
+
+本模板的 `README.md` 保留在源码树中供开发者和维护者阅读，打包脚本不要复制它，也不要为了精简发布包删除它。`config说明.json` 只给人阅读，插件运行时读取严格 JSON 的 `config.json`。

@@ -12,9 +12,9 @@
 - 区分运行配置和说明配置。运行配置给插件读取，说明配置给服务器管理员看。
 - 服务器管理员经常调整的玩法、文案、倍率、概率、列表类内容优先配置化。
 - 内部技术参数、临时排错参数、错误配置后风险较高的参数不默认暴露；需要暴露时写清安全范围。
-- 发布包应包含根目录 `config.json` 和 `config说明.json`。
-- `README.md` 可选。
-- `config.json` 是插件读取的严格 JSON；`config说明.json` 只负责解释公开字段的用途、默认值、单位/范围、可选值和必要风险。可选在文件开头加一个简短“插件信息”对象，补充名称、内部标识、版本、作者、运行配置和单条重载方式，版本必须与 `PluginInfo.Version` 一致；其他安装流程、固定行为和上服验证放在 `README.md` 或项目文档。
+- 标准公开包应包含根目录 DLL、`PluginInfo.json`、`config.json` 和 `config说明.json`；除此之外只加入确属运行必需的额外文件。
+- `README.md`、`CHANGELOG.md` 和纯示例文件保留在源码仓库供开发者/维护者阅读，默认不复制进公开包；不要为了精简包而删除源码文件。
+- `config.json` 是插件读取的严格 JSON；`config说明.json` 只负责解释公开字段的用途、默认值、单位/范围、可选值和必要风险。可选在文件开头加一个简短“插件信息”对象，补充名称、内部标识、版本、作者、运行配置和单条重载方式，版本必须与 `PluginInfo.Version` 一致；其他安装流程、固定行为和上服验证放在源码仓库的 `README.md` 或项目文档。
 - `config说明.json` 不要写成简单 key-value 说明对象。可按项目需要选择字段表式结构或 JSONC 短注释样例；面向小白服主时优先使用接近 ArkShop 的紧凑 JSONC 排版。
 - 字段表式 `config说明.json` 推荐结构：
 
@@ -138,7 +138,8 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 - `PluginInfo.json` 存在。
 - `PluginInfo.json` 是合法 JSON，且 `Version`、`MinApiVersion` 都是 number。
 - `config.json` 和 `config说明.json` 存在。
-- 如项目包含 `README.md`，内容与当前行为一致。
+- 源码仓库里的 `README.md` / 项目文档与当前行为一致，但公开包中不包含这些开发者文档。
+- 除标准四类文件外，包内每个额外文件都能说明明确的运行依赖；纯说明、变更记录和示例文件应被打包脚本排除。
 - `config说明.json` 可以是合法 JSON 字段表，也可以是带 `//` 注释的 JSONC 样例；发布检查应允许一个简短的插件信息对象，同时拒绝装饰键和额外的通用说明块。
 - 对外 ZIP 的检查要区分“说明示例”和“运行值”：仅敏感字段使用脱敏占位符；会生效的示例 ID/名单不得写进正式 `config.json`。
 - 打包脚本处理中文文件名时优先使用 `-LiteralPath`，并显式检查 `config说明.json` 这个最终文件名；不要只看控制台乱码输出。

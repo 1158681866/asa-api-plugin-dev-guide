@@ -66,7 +66,8 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 - `config.json`
 - `config说明.json`
 - `config说明.json` 是否覆盖全部公开字段，使用正式、简明中文说明用途、单位/范围和关键行为；可选有一个简短插件信息/重载对象。默认检查插件信息和配置项说明前各有一个简短分隔标题，用户明确不要时除外；仍不应包含联系方式或长注意事项，也不重复完整英文路径。
-- `README.md` 可选；如存在，要和当前行为一致
+- 标准公开包除 DLL、`PluginInfo.json`、`config.json`、`config说明.json` 外，只允许加入确属运行必需的额外文件；每个额外文件都要能说明运行依赖原因。
+- 源码仓库里的 `README.md`、`CHANGELOG.md` 继续维护并保持与当前行为一致，但默认不复制进公开包；打包时只排除复制，不删除源码文件。
 - zip 是否更新
 - 对外 ZIP 仅对真实敏感字段使用 `YOUR_*` 脱敏占位符；普通配置保留可读案例值。
 - 白名单/黑名单、奖励、权限名单、Webhook 等会生效的示例数据只放在 `config说明.json`，正式 `config.json` 保持空列表、关闭或无目标等安全默认值。

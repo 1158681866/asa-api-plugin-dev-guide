@@ -71,7 +71,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 4. 编译 Release。优先使用项目现有构建方式；Windows 常见方式是 MSBuild，参数为 `Configuration=Release`、`Platform=x64`。
 5. 运行已有单元测试或 core tests。
 6. 如果有打包脚本，执行打包脚本。
-7. 检查包目录里是否有 DLL、`PluginInfo.json`、`config.json`、`config说明.json`。`README.md` 可选。
+7. 检查标准公开包是否只包含 DLL、`PluginInfo.json`、`config.json`、`config说明.json`，以及确属运行必需的额外文件。
 8. 执行自我迭代检查：判断本轮经验是通用 skill、项目文档、还是无需记录；凡是通用且边界清晰的内容应直接补到 skill/指南，不把判断工作留给用户。
 9. 交付时说明改了什么、怎么验证、包目录、DLL 时间，以及服务器上还需要测试什么。
 
@@ -84,7 +84,8 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 - 用户只说“学习插件信息的写法”或只框选元数据区时，只改插件信息对象；不得擅自把既有配置项从平铺 JSONC 改成字段表，也不改字段层级、顺序、默认值或注释风格。
 - 说明文案使用正式、简明的运维语气：每项保留用途、单位/范围、默认或案例值和关键行为；不要过度简化成“开/关”说明，也不要写成长篇教程。JSONC 注释不重复 `Database.Host` 这类完整英文路径，配置层级本身已表达位置。
 - 面向服主的数值范围优先用中文表述，例如“不能小于 0”“必须大于 0”，不要在普通配置说明中直接写 `>= 0`、`> 0` 等数学符号；公式和代码示例除外。
-- `README.md`：可选，保留给项目自己的总览和安装说明。
+- `README.md`：作为源码仓库里的开发者/维护文档保留，用于项目总览、安装、命令和排错说明；默认不复制进公开发布包，也不要为了精简包而从源码树删除。
+- 标准公开包只包含 DLL、`PluginInfo.json`、`config.json`、`config说明.json`。`.dll.arkapi`、附属运行库、签名或数据文件等只有在插件运行确实需要时才加入；`README.md`、`CHANGELOG.md` 和纯示例文件不属于运行必需文件。
 - 对外发布的 ZIP/压缩包不得包含真实数据库名、用户名、密码、Token 或服务器专用凭据。如果本地 `build/package/<Plugin>` 文件夹同时是实际上服目录、必须保留真实配置，不要为了发布去覆盖它；应复制到临时 ZIP staging 目录，只在临时副本中替换为明确占位符，对该副本重新执行配置和敏感信息校验后再压缩，并在验证脚本中同时断言“ZIP 已脱敏”和“本地发布文件夹未变化”。
 - `YOUR_*` 一类占位符只用于必须脱敏的凭据，例如数据库名、用户名、密码、Token、密钥或服务器专用地址；普通玩法和权限配置应保留可读的案例值，例如 `VIP1`、`Admin`、常规数值和枚举值。
 - 公开 `config.json` 不得为了演示格式而预填会实际生效的假数据，例如白名单/黑名单 ID、奖励对象、Webhook 地址或权限名单；此类字段应保持安全默认值（空数组、关闭或无目标）。需要展示填写格式时，在 `config说明.json` 的 JSONC 示例中分行标注示例值和“示例”注释。
@@ -115,4 +116,4 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 
 - ASA 插件如果直接包含旧版 MySQL C Connector 头文件（例如 ArkShop/Permissions 附带的 `mysql/mysql.h`），在 Windows/AsaApi 工程里可能因为 `WIN32_LEAN_AND_MEAN` 导致 `SOCKET/my_socket` 未定义。稳定写法是在包含 MySQL 头前先包含 `winsock2.h`，并确保链接 `Ws2_32.lib`；不要只靠 `Windows.h` 间接带出 socket 类型。
 - 写入 MySQL `VARCHAR`/`TEXT` 字段前，尤其是玩家名、中文日志、路径、RCON 文本、审计 reason/note，要按目标字段长度做 UTF-8 安全截断，不要直接 `std::string::substr()` 截固定字节。直接按字节截断可能切断多字节字符，在 `utf8mb4` + 严格模式下导致 INSERT/UPDATE 失败，进而让任务状态、审计表或活跃表停在中间态。
-- 数据库型 ASA 插件发布前，README 或运维文档里应给出可直接复制的自检 SQL/命令，至少覆盖：核心表是否创建、最近写入记录、任务/审计状态分布、失败记录计数、关键安全字段或跳过原因。发布包验证脚本也应检查这些自检入口是否存在，避免代码功能完整但上服后缺少可操作验收路径。
+- 数据库型 ASA 插件发布前，源码仓库的 README 或运维文档里应给出可直接复制的自检 SQL/命令，至少覆盖：核心表是否创建、最近写入记录、任务/审计状态分布、失败记录计数、关键安全字段或跳过原因。发布验证应检查源码文档中的这些入口是否存在，但不因此把 README 复制进公开包。

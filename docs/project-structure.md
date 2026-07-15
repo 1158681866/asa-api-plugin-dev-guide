@@ -20,7 +20,7 @@ plugin-name/
 ├── PluginInfo.json
 ├── package.ps1
 ├── config说明.json
-└── README.md        # 可选
+└── README.md        # 源码仓库的开发者/维护文档
 ```
 
 ## 分层建议
@@ -54,8 +54,7 @@ PluginName/
 ├── PluginInfo.json
 ├── config.json
 ├── config说明.json
-├── README.md        # 可选
-└── CHANGELOG.md
+└── <运行必需的额外文件>  # 仅在插件确实依赖时加入
 ```
 
 很多现有 ASA API 插件会把运行配置直接放在插件根目录，例如：
@@ -69,25 +68,16 @@ PluginName/
 └── config说明.json
 ```
 
-这种结构对服务器管理员更直观，也方便直接复制到 `ArkApi/Plugins/PluginName/`。当前标准要求 `config说明.json` 作为配置说明文件；是否额外使用 `README.md` 或 `config/` 子目录由项目自己决定，重点是发布包要自洽：
+这种结构对服务器管理员更直观，也方便直接复制到 `ArkApi/Plugins/PluginName/`。标准公开包只包含 DLL、`PluginInfo.json`、`config.json`、`config说明.json`，以及确属运行必需的额外文件：
 
 - 插件实际读取的位置必须和包内文件一致。
 - `PluginInfo.json` 必须在插件根目录。
 - `config.json` 应该是干净、可被严格 JSON 解析的运行配置。
 - `config说明.json` 是必需的配置说明文件，通常复制一份真实配置结构后只在字段旁写必要说明；可选加一个简短的“插件信息”对象和重载方式，但不在文件顶部或底部重复安装、固定规则、上服验证和长注意事项。
 - 如果说明文件里有 `//` 注释，即使命名为 `.json`，也不是严格 JSON。
-- 如果包含 `.dll.arkapi`、签名、校验或兼容文件，应在 `README.md` 或项目文档里说明用途。
+- `.dll.arkapi`、附属运行库、签名、校验或数据文件只有在插件运行确实需要时才加入，并在源码仓库的 README 或项目文档里说明用途。
+- `README.md`、`CHANGELOG.md`、额外配置示例等仅供开发者阅读的文件保留在源码树，默认不进入公开包；不要通过删除源码文件来精简包。
 
-如果插件配置较复杂，也可以采用：
-
-```text
-PluginName/
-├── PluginName.dll
-├── PluginInfo.json
-├── config.json
-├── config说明.json
-├── config-commented.json  # 可选
-└── README.md              # 可选
-```
+如果插件还需要其他运行配置或数据文件，只有在代码会实际读取、缺少后会影响加载或功能时才放进包；纯说明、示例和开发记录仍留在源码仓库。
 
 每次打包后检查 DLL 时间，避免服务器误拷旧包。
