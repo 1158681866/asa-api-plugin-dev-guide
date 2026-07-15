@@ -83,13 +83,15 @@
 {
   "FullName": "PluginName",
   "Description": "插件说明",
-  "Version": 0.1,
-  "MinApiVersion": 1.19,
+  "Version": 1.0,
+  "MinApiVersion": 2.0,
   "Dependencies": []
 }
 ```
 
-- `Version` 必须是 JSON number，例如 `0.1`、`1.0`、`1.09`，不要写 `"0.1.0"` 这种字符串。
+- `Version` 必须是 JSON number。新插件默认从 `1.0` 开始，不使用 `0.1` 作为默认起始版本，也不要写 `"1.0.0"` 这种字符串。
+- `Version` 与 `MinApiVersion` 不是同一个概念：前者是插件版本，后者是最低 AsaApi 版本。不能因为 `MinApiVersion=2.0` 就把尚未发布的新插件直接升为 `Version=2.0`。
+- 尚未正式发布且仍在同一轮开发/测试时，保持当前插件版本，不因每次重新构建、打包或配置调整自动递增版本；正式发布后再按已发布版本和变更范围决定是否升级。
 - `MinApiVersion` 必须是 JSON number，不能缺失或写成字符串；缺失时 AsaApi 可能在 `PluginManager::ReadPluginInfo` / `LoadAllPlugins` 阶段报 `type must be number, but is null`。
 - 如果启动日志出现 `[json.exception.type_error.302] type must be number, but is string/null`，优先检查各插件包的 `PluginInfo.json` 里的 `Version` 和 `MinApiVersion`。
 - `Name`、`FriendlyName`、`Authors` 这类自定义字段不要替代 `FullName`、`Version`、`MinApiVersion`；需要保留时也应同时保留 AsaApi 标准字段。

@@ -1,5 +1,12 @@
 # 版本策略
 
+## 起始版本与 API 版本
+
+- 新插件的 `PluginInfo.Version` 默认从 `1.0` 开始。
+- `PluginInfo.Version` 表示插件自身版本，`PluginInfo.MinApiVersion` 表示最低 AsaApi 版本；两者互相独立，不能因为最低 API 是 `2.0` 就把新插件版本直接写成 `2.0`。
+- 插件尚未正式发布、仍处于同一轮开发或测试时，重新构建、重新打包、修改配置结构都不自动增加版本号；先保持 `1.0`，正式发布后再根据已发布基线判断下一版本。
+- 两个字段都必须是 JSON number，例如 `Version: 1.0`、`MinApiVersion: 2.0`。
+
 ## 语义化版本
 
 推荐使用：

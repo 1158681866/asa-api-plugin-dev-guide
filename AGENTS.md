@@ -63,6 +63,8 @@
 9. 检查最终对外 ZIP 是否只包含 DLL、`PluginInfo.json`、`config.json`、`config说明.json`，以及确属运行必需的额外文件。
 10. 交付时说明改动、验证结果、本地测试目录、对外 ZIP、DLL 时间，以及服务器上还要测什么。
 
+`PluginInfo.Version` 是插件自身版本，新插件默认从 `1.0` 开始；`PluginInfo.MinApiVersion` 只是最低 AsaApi 版本，不能把它直接当成插件版本。尚未正式发布且仍处于同一轮开发/测试时，不因重复构建、打包或配置调整自动递增插件版本。
+
 项目 `README.md`、`CHANGELOG.md` 等文档的权威版本保留在源码树，本地 `build/package/<Plugin>/` 测试目录可以保留副本。只有最终对外 ZIP 默认排除这些开发者文档；优先使用临时 ZIP staging、显式 ZIP 白名单，或先压缩再把文档放回测试目录，不得为了精简 ZIP 删除测试目录或源码里的文件。
 
 ## 配置说明写法

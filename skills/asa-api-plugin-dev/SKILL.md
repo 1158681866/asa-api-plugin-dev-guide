@@ -79,7 +79,8 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 ## 本地测试目录与对外 ZIP 标准
 
 - `PluginInfo.json`：保持原标准，仍然必需。
-- `PluginInfo.json` 必须使用 AsaApi 期望的数字字段：`Version` 和 `MinApiVersion` 都写 JSON number，不要写 `"0.1.0"` 这类字符串，也不要漏写 `MinApiVersion`。
+- `PluginInfo.json` 必须使用 AsaApi 期望的数字字段：`Version` 和 `MinApiVersion` 都写 JSON number，不要写 `"1.0.0"` 这类字符串，也不要漏写 `MinApiVersion`。
+- `Version` 是插件自身版本，`MinApiVersion` 是最低 AsaApi 版本，两者互相独立。新插件默认从 `Version: 1.0` 开始；即使 `MinApiVersion` 是 `2.0`，也不能把插件版本自动写成 `2.0`。尚未正式发布且仍处于同一轮开发/测试时，不要仅因为重新打包或调整配置就连续升成 `1.1`、`1.2`。
 - `config.json`：保持严格 JSON。
 - `config说明.json`：必需的中文配置说明文件。格式可按项目需要选择“字段表式结构”或“JSONC 短注释样例”；面向小白服主时优先用类似 ArkShop 的紧凑 JSONC 排版，把解释放在配置项同一行或相邻短注释里。可在顶部保留一个简短的“插件信息”对象，包含名称、内部标识、版本、作者、运行配置和一条重载方式即可；版本必须与 `PluginInfo.Version` 一致。默认在“插件信息”和“配置项说明”前各加一个简短分隔标题；用户明确说不要时才省略。主体仍只覆盖公开配置项的必要中文含义、默认值/常用值、单位、可选值和风险开关；禁止联系方式字段、命令列表、固定安全规则、上服验证和底部长注意事项块。
 - 用户只说“学习插件信息的写法”或只框选元数据区时，只改插件信息对象；不得擅自把既有配置项从平铺 JSONC 改成字段表，也不改字段层级、顺序、默认值或注释风格。
