@@ -2,7 +2,7 @@
 
 ## 未发布
 
-- 精简 `config说明.json` 规则：只保留与公开字段相邻的必要说明，不再要求顶部文件声明、重载命令、底部安全规则、注意事项或上服验证块。
+- 精简 `config说明.json` 规则：主体只保留与公开字段相邻的必要说明，可选增加简短的插件信息/重载方式对象；仍禁止装饰分隔、联系方式和长注意事项块。
 - 简化公开发布包：删除包内自定义发布清单要求；版本以 `PluginInfo.Version` 为准，ZIP/DLL SHA256 和验证结果改为包外记录。
 - 收紧 Release DLL 发布门禁：正式发布优先强制重建；仅做新鲜度检查时纳入项目构建元数据，并检查 CodeView/RSDS PDB 记录与 ZIP staging，阻止旧 DLL 和本机绝对路径泄漏。
 - 补充 Windows 构建脚本兼容规则：通过 `vswhere.exe` 查找真实 MSBuild，避免写死 Community/BuildTools 路径；含中文且由 Windows PowerShell 5.1 执行的 `.ps1` 使用 UTF-8 BOM，并以 `powershell.exe -File` 实测。

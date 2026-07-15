@@ -65,7 +65,7 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 - `PluginInfo.json`
 - `config.json`
 - `config说明.json`
-- `config说明.json` 是否按完整配置树展示全部公开字段，使用正式、简明中文说明用途、单位/范围和关键行为，且不重复完整英文路径。
+- `config说明.json` 是否覆盖全部公开字段，使用正式、简明中文说明用途、单位/范围和关键行为；可选有一个简短插件信息/重载对象，但不应包含装饰分隔键、联系方式或长注意事项，也不重复完整英文路径。
 - `README.md` 可选；如存在，要和当前行为一致
 - zip 是否更新
 - 对外 ZIP 仅对真实敏感字段使用 `YOUR_*` 脱敏占位符；普通配置保留可读案例值。
