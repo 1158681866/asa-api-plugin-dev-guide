@@ -127,7 +127,9 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 如果有打包脚本，执行打包脚本。随后检查：
 
 - 包目录存在。
-- DLL 时间是新的。
+- 正式发布优先执行 `Release|x64` 重建；若只做新鲜度门禁，除源码外还要覆盖 `.sln/.vcxproj` 和参与构建的项目自定义 `.props/.targets`，任一输入较新时拒绝打包。
+- 对实际包内 DLL 执行 `dumpbin /headers`，确认 `Format: RSDS` 不含本机绝对 PDB 路径；同时扫描 ZIP staging 中的用户目录、项目根目录和 SDK 根目录片段。
+- DLL 时间是本次构建时间。
 - 包内配置是预期配置。
 - `PluginInfo.json` 存在。
 - `PluginInfo.json` 是合法 JSON，且 `Version`、`MinApiVersion` 都是 number。
