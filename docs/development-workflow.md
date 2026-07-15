@@ -65,7 +65,8 @@ ASA API 插件开发应按“确认接口、隔离核心逻辑、最小接入服
 - Release 编译。
 - core tests。
 - 配置解析和默认值。
-- 包目录结构。
+- 本地 `build/package/<Plugin>` 测试目录结构及其本地配置。
+- 最终对外 ZIP 条目白名单。
 - DLL 时间和 zip 时间。
 
 服务器验证：

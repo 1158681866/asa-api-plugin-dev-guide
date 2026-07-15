@@ -32,7 +32,7 @@ Copy-Item -Recurse .\templates\plugin-skeleton ..\my-plugin
 - `src/plugin`
 - `tests`
 - `package.ps1`
-- `README.md`：源码仓库的开发者/维护文档，默认不复制进标准公开包
+- `README.md`：源码仓库的开发者/维护文档，可复制到本地 `build/package/<Plugin>` 测试目录，但默认不进入最终对外 ZIP
 
 模板目录只提供结构思路，不包含可直接编译的 C++ 代码。
 

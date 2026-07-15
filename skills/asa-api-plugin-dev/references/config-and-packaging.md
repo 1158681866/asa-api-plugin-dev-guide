@@ -12,8 +12,9 @@
 - 区分运行配置和说明配置。运行配置给插件读取，说明配置给服务器管理员看。
 - 服务器管理员经常调整的玩法、文案、倍率、概率、列表类内容优先配置化。
 - 内部技术参数、临时排错参数、错误配置后风险较高的参数不默认暴露；需要暴露时写清安全范围。
-- 标准公开包应包含根目录 DLL、`PluginInfo.json`、`config.json` 和 `config说明.json`；除此之外只加入确属运行必需的额外文件。
-- `README.md`、`CHANGELOG.md` 和纯示例文件保留在源码仓库供开发者/维护者阅读，默认不复制进公开包；不要为了精简包而删除源码文件。
+- `build/package/<Plugin>/` 是本地测试目录，不是发放级产物；可以保留 `README.md`、`CHANGELOG.md` 副本和本地配置。
+- 最终对外 ZIP 应包含根目录 DLL、`PluginInfo.json`、`config.json` 和 `config说明.json`；除此之外只加入确属运行必需的额外文件。
+- `README.md`、`CHANGELOG.md` 和纯示例文件的权威版本保留在源码仓库，本地测试目录可以保留副本；只有最终对外 ZIP 默认排除它们。
 - `config.json` 是插件读取的严格 JSON；`config说明.json` 只负责解释公开字段的用途、默认值、单位/范围、可选值和必要风险。可选在文件开头加一个简短“插件信息”对象，补充名称、内部标识、版本、作者、运行配置和单条重载方式，版本必须与 `PluginInfo.Version` 一致；其他安装流程、固定行为和上服验证放在源码仓库的 `README.md` 或项目文档。
 - `config说明.json` 不要写成简单 key-value 说明对象。可按项目需要选择字段表式结构或 JSONC 短注释样例；面向小白服主时优先使用接近 ArkShop 的紧凑 JSONC 排版。
 - 字段表式 `config说明.json` 推荐结构：
@@ -64,11 +65,11 @@
 
 ### 公开 ZIP 的配置模板与脱敏
 
-- 对外 ZIP 不得包含真实数据库凭据、Token、密钥、服务器专用地址或其他私有运行数据；若本地包目录兼作部署目录，只能在临时 staging 副本中改写公开配置。
+- 对外 ZIP 不得包含真实数据库凭据、Token、密钥、服务器专用地址或其他私有运行数据；若本地测试目录保留本地配置，只能在临时 staging 副本中改写公开配置。
 - `YOUR_*` 只用于必须脱敏的敏感字段，例如 `YOUR_DATABASE`、`YOUR_USERNAME`、`YOUR_PASSWORD`。普通配置使用可读案例值，例如权限组 `VIP1`、`Admin`、常规数值和枚举值；不要把所有字段都套成脱敏占位符。
 - 正式 `config.json` 必须保持可安全上服的默认状态。白名单/黑名单 ID、奖励名单、Webhook、权限名单等会直接改变行为的字段，不要预填假示例；应使用空数组、关闭状态或无目标。
 - 需要让列表格式更直观时，在 `config说明.json` 的 JSONC 示例中分行展示，并明确标注示例。例如说明文件可展示两个示例 ID，正式 `config.json` 仍保持对应列表为空。
-- 发布校验同时确认：ZIP 无真实敏感值、ZIP 配置符合公开安全模板、说明文件覆盖填写格式、本地部署文件夹配置未被打包流程覆盖。
+- 发布校验同时确认：ZIP 无真实敏感值、ZIP 配置符合公开安全模板、说明文件覆盖填写格式、本地测试目录的配置和允许存在的开发文档副本未被打包流程覆盖或删除。
 
 ## PluginInfo.json
 
@@ -128,21 +129,21 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 
 ## 打包
 
-如果有打包脚本，执行打包脚本。随后检查：
+如果有打包脚本，执行打包脚本。随后分别检查本地测试目录和最终对外 ZIP：
 
-- 包目录存在。
+- `build/package/<Plugin>/` 本地测试目录存在并已刷新；其中可以保留 `README.md`、`CHANGELOG.md` 副本和本地配置。
 - 正式发布优先执行 `Release|x64` 重建；若只做新鲜度门禁，除源码外还要覆盖 `.sln/.vcxproj` 和参与构建的项目自定义 `.props/.targets`，任一输入较新时拒绝打包。
-- 对实际包内 DLL 执行 `dumpbin /headers`，确认 `Format: RSDS` 不含本机绝对 PDB 路径；同时扫描 ZIP staging 中的用户目录、项目根目录和 SDK 根目录片段。
-- DLL 时间是本次构建时间。
-- 包内配置是预期配置。
-- `PluginInfo.json` 存在。
-- `PluginInfo.json` 是合法 JSON，且 `Version`、`MinApiVersion` 都是 number。
-- `config.json` 和 `config说明.json` 存在。
-- 源码仓库里的 `README.md` / 项目文档与当前行为一致，但公开包中不包含这些开发者文档。
-- 除标准四类文件外，包内每个额外文件都能说明明确的运行依赖；纯说明、变更记录和示例文件应被打包脚本排除。
+- 对最终 ZIP 内 DLL 执行 `dumpbin /headers`，确认 `Format: RSDS` 不含本机绝对 PDB 路径；同时扫描 ZIP staging 中的用户目录、项目根目录和 SDK 根目录片段。
+- 最终 ZIP 内 DLL 时间是本次构建时间。
+- 最终 ZIP 内配置是预期的公开配置。
+- 最终 ZIP 内 `PluginInfo.json` 存在，且是合法 JSON，`Version`、`MinApiVersion` 都是 number。
+- 最终 ZIP 内 `config.json` 和 `config说明.json` 存在。
+- 源码仓库里的 `README.md` / 项目文档与当前行为一致；本地测试目录可以保留文档副本，但最终对外 ZIP 不包含这些开发者文档。
+- 除标准四类文件外，ZIP 内每个额外文件都能说明明确的运行依赖；纯说明、变更记录和示例文件只从 ZIP 条目中排除。
 - `config说明.json` 可以是合法 JSON 字段表，也可以是带 `//` 注释的 JSONC 样例；发布检查应允许一个简短的插件信息对象，同时拒绝装饰键和额外的通用说明块。
 - 对外 ZIP 的检查要区分“说明示例”和“运行值”：仅敏感字段使用脱敏占位符；会生效的示例 ID/名单不得写进正式 `config.json`。
 - 打包脚本处理中文文件名时优先使用 `-LiteralPath`，并显式检查 `config说明.json` 这个最终文件名；不要只看控制台乱码输出。
+- ZIP 优先从临时 staging 或显式文件白名单生成；也可以先压缩再把开发文档副本放回本地测试目录。验证脚本应断言 ZIP 条目白名单和本地测试目录完整性，不得靠删除测试目录内容来通过检查。
 - 清理旧 release 目录前必须解析并校验目标路径确实位于项目自己的 release 子目录下，避免误删，同时避免旧包残留伪造出“打包成功”。
 
-交付时给出包目录和 DLL 时间。
+交付时分别给出本地测试目录、最终对外 ZIP 和 DLL 时间。

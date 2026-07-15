@@ -140,11 +140,23 @@ plugin-name/
 - `core` 放纯逻辑、配置解析、状态管理、模板替换，尽量能用普通 exe 测试。
 - `plugin` 放 AsaApi Hook、命令注册、游戏对象读写。
 - `tests` 覆盖不依赖服务器的逻辑。
-- `build/package` 放服务器可直接复制的发布包。
+- `build/package/<Plugin>` 放本地测试目录，可以保留开发文档副本和本地配置；它不是最终对外发放级产物。
 
-## 发布包结构
+## 本地测试目录与对外 ZIP
 
-发布包应该是服务器管理员能直接复制到 `ArkApi/Plugins` 的结构：
+`build/package/<Plugin>/` 用于本地检查或测试部署，可以保留 `README.md`、`CHANGELOG.md` 副本和本地配置。例如：
+
+```text
+build/package/PluginName/
+├── PluginName.dll
+├── PluginInfo.json
+├── config.json
+├── config说明.json
+├── README.md          # 可选的本地测试副本
+└── CHANGELOG.md       # 可选的本地测试副本
+```
+
+只有最终对外 ZIP 属于发放级产物。ZIP 解压后应是服务器管理员能直接复制到 `ArkApi/Plugins` 的结构：
 
 ```text
 PluginName/
@@ -160,8 +172,9 @@ PluginName/
 - `PluginInfo.json` 放在插件根目录。
 - `config.json` 是插件运行时读取的严格 JSON，不写 `//` 注释。
 - `config说明.json` 是必需的中文配置说明文件，只保留与公开字段相邻的必要说明；可选增加简短的“插件信息”对象和一条重载方式。默认在插件信息和配置项说明前添加简短分隔标题，用户明确说不要时才省略；仍不写联系方式或长注意事项；安装和上服验证放在源码仓库的 README、项目文档或 wiki。
-- 标准公开包只包含 DLL、`PluginInfo.json`、`config.json`、`config说明.json`。`.dll.arkapi`、附属运行库、签名或数据文件等只有在插件运行确实需要时才加入。
-- `README.md`、`CHANGELOG.md` 等属于源码仓库里的开发者/维护文档，默认不复制进公开包，也不能算作“运行必需的额外文件”。精简发布包时保留源码文件，只修改打包复制清单。
+- 最终对外 ZIP 默认只包含 DLL、`PluginInfo.json`、`config.json`、`config说明.json`。`.dll.arkapi`、附属运行库、签名或数据文件等只有在插件运行确实需要时才加入。
+- `README.md`、`CHANGELOG.md` 等属于开发者/维护文档，可以留在源码树和本地测试目录，但不进入最终对外 ZIP，也不能算作“运行必需的额外文件”。
+- 打包时优先使用临时 ZIP staging 或显式 ZIP 白名单；也可以先生成 ZIP，再把文档副本放回本地测试目录。不得为了精简 ZIP 删除测试目录或源码里的文档，也不得覆盖测试目录里的本地配置。
 - 如果说明文件里有 `//` 注释，即使命名为 `.json`，也不是严格 JSON，插件运行时不应读取它。
 - 每次打包后检查 DLL 时间，避免误拷旧包。
 
@@ -230,12 +243,12 @@ RCON / 控制台重载可以减少重启服务器次数。玩家可见回执要�
 
 - Release 编译通过。
 - core tests 通过。
-- 包目录刷新。
+- 本地 `build/package/<Plugin>` 测试目录已刷新，且未因精简 ZIP 丢失开发文档副本或本地配置。
 - DLL 时间是新的。
 - `PluginInfo.json` 存在。
 - `config.json` 能解析。
 - `config说明.json` 反映当前公开配置；源码仓库里的 README / 项目文档反映当前真实逻辑。
-- 公开包不包含 `README.md`、`CHANGELOG.md` 等仅供开发者阅读的文档；额外文件均有明确运行依赖依据。
+- 最终对外 ZIP 不包含 `README.md`、`CHANGELOG.md` 等仅供开发者阅读的文档；额外文件均有明确运行依赖依据。
 - Debug 日志受配置控制或已清理。
 - 注册的命令、Hook、timer 在卸载/重载时能清理。
 - 保留上一版可回滚 DLL 和配置。
