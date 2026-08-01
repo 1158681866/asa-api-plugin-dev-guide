@@ -47,3 +47,9 @@ AsaApi `API::Timer::RecurringExecute(..., async=false)` 通过 API timer update 
 
 如果其他插件在某个调用后立刻报错，先用“前/后”日志定位最后一个触发点，再评估是否需要替换、延迟、配置化或关闭该调用。
 
+## ASA API 2.03 命令卸载
+
+- ASA API 2.03 会在 `Plugin_Unload()` 返回后调用模块级清理，自动将该 DLL 注册的聊天、控制台、RCON 命令和命令回调置空并移出容器。
+- 不要在 `Plugin_Unload()` 中再次手动执行 `RemoveChatCommand`、`RemoveConsoleCommand` 或 `RemoveRconCommand`。如果卸载操作由 `plugins.unload` 的 RCON/控制台命令触发，API 命令分发仍持有一份 `shared_ptr` 快照；插件先手动移除命令会让后续模块级清理无法把快照中的 `std::function` 置空，DLL 被释放后快照析构可能在 `CheckCommands` / `_Ref_count_obj2::_Destroy` 崩溃。
+- 动态配置重载时仍可增删命令，但不能在当前命令回调栈内直接修改同一命令容器；延迟到下一 tick/timer 执行。
+

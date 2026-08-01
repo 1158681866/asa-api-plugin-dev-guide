@@ -139,7 +139,7 @@ screen
 
 ## 命令设计
 
-玩家输入的正式聊天命令必须使用 `AddChatCommand` 注册，并在卸载时使用 `RemoveChatCommand` 注销。不要用 `AddOnChatMessageCallback` 自行解析来代替正式命令注册：通用聊天回调即使返回 `true` 阻止了游戏默认广播，也不会把消息标记为正式命令，聊天桥或其他观察插件仍可能把它记录、转发或重新发送。
+玩家输入的正式聊天命令必须使用 `AddChatCommand` 注册。不要用 `AddOnChatMessageCallback` 自行解析来代替正式命令注册：通用聊天回调即使返回 `true` 阻止了游戏默认广播，也不会把消息标记为正式命令，聊天桥或其他观察插件仍可能把它记录、转发或重新发送。ASA API 2.03 及以后会在 `Plugin_Unload()` 返回后自动清除该 DLL 注册的命令和回调，插件卸载函数中不要再手动调用 `RemoveChatCommand`、`RemoveConsoleCommand` 或 `RemoveRconCommand`。
 
 AsaApi 的正式命令匹配首个 token，命中后执行回调、设置 `command_executed=true`，并在调用游戏原始聊天广播前返回。命令回调本身不需要额外的“隐藏”参数。
 
