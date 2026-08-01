@@ -50,3 +50,5 @@ ASA 插件开发、排错、审查或发布收尾前，应主动做一次迭代�
 - 需要面向人阅读时，同步更新 `docs/*.md`
 
 本机 `C:\Users\<User>\.codex\skills\asa-api-plugin-dev` 只是安装后的副本；长期维护应以 `asa-api-plugin-dev-guide` 仓库为准。完成后检查 git diff，必要时提交并推送到远程仓库。
+
+更新已有规则时优先修改原文，不要在其他文件继续追加相反结论。提交前用 `rg` 搜索 `SKILL.md`、`AGENTS.md`、`references` 和 `docs` 中的旧写法、反向结论和重复规则，再执行 `git diff --check`，最后同步本机安装副本。该流程先保持轻量；只有固定检查长期重复且人工经常遗漏时，才增加小型辅助脚本。
