@@ -18,10 +18,11 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 3. 每个引擎/API 符号和功能入口优先查官方文档 / ASA API wiki：`https://arkserverapi.wiki/asa/index.html`；Wiki 足够时直接按文档做并停止，不为了“保险”先翻 SDK 或成熟插件源码。只有官方没有、写得不清楚、疑似过期，或已经出现编译/签名不一致时，才用本地 AsaApi SDK 做最后确认。`文档优先` 高于 `SDK 里字段能编译`。
 4. 访问游戏对象时先从 API 文档/wiki 查 AsaApi/ArkApi 标准封装、官方推荐接口、`AsaApi::GetApiUtils()`、SDK helper 或对象公开安全函数；不要一开始就直接碰底层字段、组件字段、私有类信息、`GetNativePointerField`、`NativeCall` 或手写偏移。只有确认没有标准封装、业务必须、并已把风险集中隔离时才使用底层访问。
 5. 不确定的 Hook 签名、字段名、调用链必须标记为“待确认”，不要写成确定结论。
-6. 行为改动要同步更新代码、默认配置、测试、包内文件和文档。
-7. 完成后编译、跑已有测试、打包，并报告产物路径和 DLL 时间。
-8. 区分 API 事实、社区常见结构和工程判断；不要把项目特定问题写成通用规则。
-9. ASA 插件开发、排错或发布结束前，必须执行一次“自我迭代检查”：如果本轮暴露了可复用于多类 ASA 插件的坑点、验证步骤或稳定写法，默认自动更新本 skill 或对应参考，不等待用户提醒；如果只属于单个项目，应记录到项目文档；只有是否适合通用化存在明显争议、可能误导他人、或需要包含项目私有内容时，才先向用户确认。
+6. ASA API 或 SDK 更新后不能只看“能否编译”：还要检查命令、回调、Hook 和 `Plugin_Unload()` 生命周期是否变化，至少回归验证加载、命令调用、卸载/重载这四个基本路径。
+7. 行为改动要同步更新代码、默认配置、测试、包内文件和文档。
+8. 完成后编译、跑已有测试、打包，并报告产物路径和 DLL 时间。
+9. 区分 API 事实、社区常见结构和工程判断；不要把项目特定问题写成通用规则。
+10. ASA 插件开发、排错或发布结束前，必须执行一次“自我迭代检查”：如果本轮暴露了可复用于多类 ASA 插件的坑点、验证步骤或稳定写法，默认自动更新本 skill 或对应参考，不等待用户提醒；如果只属于单个项目，应记录到项目文档；只有是否适合通用化存在明显争议、可能误导他人、或需要包含项目私有内容时，才先向用户确认。
 
 
 ## 用户沟通与配置解释
@@ -47,7 +48,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 
 ## 工程判断
 
-- 玩家输入的正式聊天命令必须优先使用 `AddChatCommand` / `RemoveChatCommand` 注册与注销，不得用 `AddOnChatMessageCallback` 手工解析来代替。正式命令命中后应由 AsaApi 阻止原消息广播，并让其他聊天观察插件收到 `command_executed=true`；通用聊天回调只用于普通聊天的观察、过滤或修改。动态重载命令别名时，不要在当前聊天命令回调栈内直接删改命令容器，应延迟到下一 tick/timer。
+- 玩家输入的正式聊天命令必须优先使用 `AddChatCommand` 注册，不得用 `AddOnChatMessageCallback` 手工解析来代替。正式命令命中后应由 AsaApi 阻止原消息广播，并让其他聊天观察插件收到 `command_executed=true`；通用聊天回调只用于普通聊天的观察、过滤或修改。ASA API 2.03 及以后会在 `Plugin_Unload()` 返回后按 DLL 自动清理该插件注册的命令和回调，因此卸载函数不要手动调用 `RemoveChatCommand`、`RemoveConsoleCommand` 或 `RemoveRconCommand`；旧 API 版本应按对应 SDK/文档确认。动态重载命令别名时，不要在当前聊天命令回调栈内直接删改命令容器，应延迟到下一 tick/timer。
 - 大范围扫描、高频全局 Hook、脚本派发、状态同步、setter 等做法需要说明业务必要性、触发频率、范围限制、可观测日志和回滚方式。
 - 定时器任务如果也能被 RCON/控制台手动触发，必须考虑重入/并发执行。对会遍历全图、写审计表、Destroy Actor、发奖励、改权限或改数据库状态的任务，稳定写法是在任务入口加互斥/运行中标记，并在 Status 或日志里暴露 running/skipped 状态，避免重复执行导致重复清理、重复发放或任务状态混乱。
 - 不靠猜测确定游戏对象路径、Outer 链、脚本派发、状态同步、setter 等调用链；不确定时先查官方文档 / wiki。Wiki 够用就停止，只有缺资料或编译对不上才查 SDK。
@@ -128,4 +129,7 @@ description: ASA API / ArkServerApi 插件开发通用技能。用于 Ark Surviv
 
 - ASA 插件如果直接包含旧版 MySQL C Connector 头文件（例如 ArkShop/Permissions 附带的 `mysql/mysql.h`），在 Windows/AsaApi 工程里可能因为 `WIN32_LEAN_AND_MEAN` 导致 `SOCKET/my_socket` 未定义。稳定写法是在包含 MySQL 头前先包含 `winsock2.h`，并确保链接 `Ws2_32.lib`；不要只靠 `Windows.h` 间接带出 socket 类型。
 - 写入 MySQL `VARCHAR`/`TEXT` 字段前，尤其是玩家名、中文日志、路径、RCON 文本、审计 reason/note，要按目标字段长度做 UTF-8 安全截断，不要直接 `std::string::substr()` 截固定字节。直接按字节截断可能切断多字节字符，在 `utf8mb4` + 严格模式下导致 INSERT/UPDATE 失败，进而让任务状态、审计表或活跃表停在中间态。
+- 多服或多插件进程消费同一张数据库任务表时，不能“先 SELECT pending，再执行奖励，最后 UPDATE”；必须在执行任何外部副作用前用单条带状态和归属条件的 `UPDATE pending -> processing` 原子取得执行权，并只在 affected rows 恰好为 1 时继续。完成、失败恢复和 stale 回收也必须同时校验 `status`、`executor`、`server_key/owner`，避免另一个进程已经接管后仍回写任务。
+- 游戏背包发物品、执行控制台命令等副作用无法与 MySQL 事务原子提交。稳定做法是区分“已 claim 但尚未开始副作用”和“副作用已开始”：前者在明确未产生结果时可恢复 `pending`；后者遇到进程崩溃、部分成功或数据库确认失败时应隔离为人工核对状态，而不是自动重试造成重复发放。stale processing 回收必须按这两个阶段分别处理。
+- WebSocket、HTTP 或其他网络线程只负责协议、鉴权、心跳和有界队列；不得在网络线程访问 `UWorld`、玩家控制器、背包或其他 UObject。入站通知应回到 ASA Timer/游戏线程后重新查询权威数据库，再执行游戏对象操作；卸载时先停止网络线程并关闭阻塞句柄，再释放数据库和插件全局状态。
 - 数据库型 ASA 插件发布前，源码仓库的 README 或运维文档里应给出可直接复制的自检 SQL/命令，至少覆盖：核心表是否创建、最近写入记录、任务/审计状态分布、失败记录计数、关键安全字段或跳过原因。发布验证应检查源码文档中的这些入口是否存在，但不因此把 README 复制进公开包。
