@@ -36,6 +36,10 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 
 切换 AsaApi SDK 分支后，如果头文件开始报 C++ 标准相关错误，例如 `std::string_view::starts_with` 不存在，或 `FindScriptStruct` 附近出现模板 `>>` 语法错误，先检查工程文件里的 `<LanguageStandard>`。较新的 AsaApi SDK 可能需要 C++20，把插件工程和测试工程从 `stdcpp17` 调整到 `stdcpp20` 后再重新编译。这个现象通常说明编译标准不够新，不等于某个业务 Hook 或字段已经失效。
 
+官方 AsaApi 工程如果固定了本机没有的 `<VCToolsVersion>`，会在构建开始时报 `MSB8070`。先确认本机已安装的 MSVC 目录，再使用 `/p:VCToolsVersion=<已安装版本>` 覆盖本次构建，不要为了机器差异修改官方工程。SDK 源码更新后还要同步刷新 `out_lib\\AsaApi.lib`，不能只更新头文件。
+
+插件依赖的 `json.hpp`、`fmt` 等头文件不要用多层相对路径转发到临时下载目录或另一个无关插件。优先使用当前 SDK 已公开的包含目录，或在项目内固定所需版本；构建前应验证这些路径在干净环境中真实存在。
+
 ### Release DLL 新鲜度与 PDB 路径
 
 正式发布优先在打包前执行一次 `Release|x64` 的 `Rebuild`，成功后再复制本次构建输出的 DLL。若打包脚本复用已有 DLL 并只做时间新鲜度检查，输入不能只包含 `.cpp/.h`；至少还要包含 `.sln/.vcxproj` 以及实际参与本项目构建的自定义 `.props/.targets`。任一输入比 DLL 新时必须拒绝打包，避免编译标准、链接选项或依赖路径已经变化，却仍复制旧 DLL。

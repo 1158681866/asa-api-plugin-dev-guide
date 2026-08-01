@@ -122,6 +122,8 @@
 & "<VS>\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe" "<plugin>.sln" /p:Configuration=Release /p:Platform=x64
 ```
 
+如果官方 AsaApi 工程固定了本机未安装的 `<VCToolsVersion>`，MSBuild 会报 `MSB8070`。先检查 `VC\\Tools\\MSVC` 下实际安装的版本，再通过 `/p:VCToolsVersion=<已安装版本>` 覆盖本次构建；不要只为适配当前机器修改官方 SDK 工程文件。更新 SDK 源码后如果本地插件链接 `out_lib\\AsaApi.lib`，必须同步重编译 `Release|x64` 并核对该库的时间和哈希，避免新头文件继续搭配旧链接库。
+
 不要在打包脚本里固定写死 `Community`、`Enterprise` 或 `BuildTools` 安装目录。优先用 Visual Studio Installer 自带的 `vswhere.exe` 查找当前机器真实的 x64 MSBuild：
 
 ```powershell
@@ -135,6 +137,8 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 如果切换到较新的 AsaApi SDK 后，头文件编译报 `std::string_view::starts_with` 不存在、`FindScriptStruct` 附近模板 `>>` 语法错误等 C++ 标准相关错误，优先检查工程的 `<LanguageStandard>`。AsaApi 89.31/V2.00 一类新头文件可能需要 C++20，应将插件工程和测试工程从 `stdcpp17` 升到 `stdcpp20` 后重新 Release 编译；这属于编译标准兼容调整，不代表业务函数本身一定失效。
 
 如果当前 SDK 的 `UnrealString.h` 报 `fmt/format.h` 缺失，不要随便引用机器上另一个 vcpkg 的 fmt。先检查该 SDK 自己的 `AsaApi/vcpkg_installed/<triplet>/<triplet>/include` 与 `lib`，把实际存在的 include/lib 目录加入插件工程，并在需要时链接同一套 `fmt.lib`。triplet 名称可能随 SDK/toolset 改变，必须以本地目录为准。编译后用 `dumpbin /DEPENDENTS` 确认发布 DLL 没意外增加未打包的 `fmt.dll` 或其他运行时依赖。
+
+不要在插件仓库里保留只转发到其他已下载项目的单行 `json.hpp` / `fmt` 头文件，例如多层 `../../..` 指向临时下载目录；目录清理或换机器后会直接导致编译失败。若当前 AsaApi SDK 已在公共包含目录提供 `json.hpp`，优先通过工程包含目录后使用 `#include <json.hpp>`；否则在插件仓库内固定并自包含地保存所需版本。
 
 如果项目有测试 exe，编译后运行。
 
