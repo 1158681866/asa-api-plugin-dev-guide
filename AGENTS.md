@@ -42,7 +42,7 @@
 
 ## 工程判断
 
-- 正式聊天命令必须用 `AddChatCommand` / `RemoveChatCommand` 注册与注销，不得用 `AddOnChatMessageCallback` 手工解析代替；命令别名热重载时，延迟到下一 tick/timer 再修改命令容器。
+- 正式聊天命令必须用 `AddChatCommand` 注册，不得用 `AddOnChatMessageCallback` 手工解析代替。ASA API 2.03 及以后会在 `Plugin_Unload()` 返回后自动清理该 DLL 注册的命令和回调，卸载函数不要再次手动调用 `RemoveChatCommand`、`RemoveConsoleCommand` 或 `RemoveRconCommand`；命令别名热重载仍可使用对应 `Remove*`，但要延迟到下一 tick/timer 再修改命令容器。
 - 玩家提示使用服务器实际业务称呼，不照搬底层 API 名称；例如 ArkShop Points 对外称“金币”时统一显示金币。固定物品名称优先使用简洁主名称，无区分必要时不追加括号同义词。
 - 大范围扫描、高频全局 Hook、脚本派发、状态同步、setter 等做法需要说明业务必要性、触发频率、范围限制、可观测日志和回滚方式。
 - 不靠猜测确定游戏对象路径、Outer 链、脚本派发、状态同步、setter 等调用链；不确定时先查官方文档 / ASA API Wiki。Wiki 缺资料、疑似过期或编译对不上时，再查 SDK 或现有项目代码。

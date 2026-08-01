@@ -53,7 +53,7 @@
 
 ## 聊天命令与普通聊天的边界
 
-- 正式聊天命令使用 `AddChatCommand` / `RemoveChatCommand`，不要用 `AddOnChatMessageCallback` 手工解析来代替。
+- 正式聊天命令使用 `AddChatCommand` 注册，不要用 `AddOnChatMessageCallback` 手工解析来代替。ASA API 2.03 及以后会在 `Plugin_Unload()` 返回后自动清理该 DLL 注册的命令和回调，卸载函数不要重复调用 `RemoveChatCommand`、`RemoveConsoleCommand` 或 `RemoveRconCommand`。
 - 正式命令命中后，AsaApi 会阻止原消息进入游戏聊天广播，并让后续聊天观察回调收到 `command_executed=true`。
 - 通用聊天回调适合观察、过滤或修改普通聊天。它返回 `true` 虽能阻止游戏默认广播，但所有观察回调仍会执行；其他聊天插件可能在消息未被标记为正式命令时先记录或转发。
 - 动态重载命令别名时，把注销和重新注册延迟到下一 tick/timer，不要在当前聊天命令回调中直接修改命令容器。
