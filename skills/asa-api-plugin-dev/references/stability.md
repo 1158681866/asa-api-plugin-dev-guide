@@ -35,6 +35,16 @@ AsaApi `API::Timer::RecurringExecute(..., async=false)` 通过 API timer update 
 - Timer 回调不会替插件吞掉所有异常。`DelayExecute/RecurringExecute` 内如果会调用 `NativeCall`、`GetNativePointerField`、`StaticClass/GetPrivateStaticClass`、`UGameplayStatics::GetAllActorsOfClass`、发物品、库存刷新或网络同步，入口应包 `try/catch`，日志写清阶段并停止本轮重试。ASA 更新后 offsets 缺失时，`API::Offsets::GetAddress()` 可能抛 C++ 异常；不捕获会冒泡到 `API::Timer::Update()` 导致崩服。
 - 如果必须在后台线程处理耗时逻辑，只处理纯数据、HTTP、文件或数据库结果，不持有或跨线程使用 `UObject`/`AActor` 指针。
 
+调用外部 AI、Webhook 或其他可能持续数秒的 HTTP 服务时，除“不能在游戏线程阻塞”外，还必须验证请求与插件卸载的生命周期。异步 API 如果使用分离线程、全局完成队列或保存指向插件代码的 `std::function`，而卸载路径不能逐请求取消并等待完成，那么 `plugins.unload` 后回调可能落到已释放 DLL。遇到这种实现时，不要直接用于外部长请求；改用插件自管且可停止、可 `join` 的工作线程/WinHTTP 会话，或生命周期独立于插件 DLL 的本机 sidecar。`Plugin_Unload()` 应先停止接单、取消网络句柄、唤醒并等待工作线程退出、清空完成队列，再允许 DLL 卸载。
+
+自管异步 WinHTTP 如果把请求上下文保存在栈上，关闭 request handle 后必须等到 `WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING`，并确认已经进入的回调全部退出，才能销毁上下文或允许 DLL 卸载。不能因为 `WinHttpCloseHandle()` 返回失败就跳过该屏障；这种异常路径宁可阻止卸载并保留阶段日志，也不能让可能迟到的回调访问已释放上下文或插件代码。
+
+RCON、服务器控制台、聊天观察和定时器回调也不能未经验证就假设在同一线程。管理命令如果会启停功能、重载文件、操作请求状态或调用游戏 API，稳定写法是：命令回调只校验来源、复制纯文本并写入有界控制队列，RCON 只立即返回“已排队”；下一次游戏线程 timer 再执行状态变更、测试消息和探针。不要跨回调保存 `RCONClientConnection*`、`RCONPacket*`、`FString*` 或玩家控制器指针。`Status` 可读取定时器发布的不可变文本快照，避免为了查询状态从未知线程遍历可变容器或调用 UE API。
+
+仅停止后台线程仍不足以证明热卸载安全。插件存在聊天、timer、RCON 或 console 回调时，应在所有入口统一经过“是否仍接单”的门闩并维护活动回调计数；卸载先关闭门闩和业务状态，再停止/join 网络线程、注销入口，最后等待活动回调归零后清空全局状态。门闩检查和活动计数必须由同一互斥边界保护，否则会出现卸载刚观察到计数为零、另一个回调随后才递增的竞态窗口。等待超时时只写阶段日志并继续等待，不可带存活回调返回让 DLL 被释放。
+
+外部 HTTPS 请求还应确认实际启用了系统证书验证。仅有 `https://` URL 不代表底层客户端验证服务端证书；携带 API Key、Token 或玩家数据时，不使用明确关闭证书验证的请求实现。
+
 ## 评估做法
 
 - 如果 Hook 参数直接提供目标对象，先评估它是否足够满足需求。
@@ -52,4 +62,5 @@ AsaApi `API::Timer::RecurringExecute(..., async=false)` 通过 API timer update 
 - ASA API 2.03 会在 `Plugin_Unload()` 返回后调用模块级清理，自动将该 DLL 注册的聊天、控制台、RCON 命令和命令回调置空并移出容器。
 - 不要在 `Plugin_Unload()` 中再次手动执行 `RemoveChatCommand`、`RemoveConsoleCommand` 或 `RemoveRconCommand`。如果卸载操作由 `plugins.unload` 的 RCON/控制台命令触发，API 命令分发仍持有一份 `shared_ptr` 快照；插件先手动移除命令会让后续模块级清理无法把快照中的 `std::function` 置空，DLL 被释放后快照析构可能在 `CheckCommands` / `_Ref_count_obj2::_Destroy` 崩溃。
 - 动态配置重载时仍可增删命令，但不能在当前命令回调栈内直接修改同一命令容器；延迟到下一 tick/timer 执行。
+- 依赖上述模块级快照失效语义的插件必须把 `PluginInfo.MinApiVersion` 设为 `2.03` 或更高，并用同源 2.03+ 公共头与官方发布包中的 `AsaApi.lib` 构建。不能一边声明兼容 1.18/1.21，一边依赖仅在 2.03 才存在的卸载屏障。
 

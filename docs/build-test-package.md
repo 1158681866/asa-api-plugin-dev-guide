@@ -71,6 +71,16 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 - `README.md`、`CHANGELOG.md` 副本可以保留；不得为了精简 ZIP 删除这些文件或源码树中的权威版本。
 - 若目录保留真实本地配置，打包流程没有用公开模板或脱敏占位符覆盖它。
 
+默认最终目录视图为：
+
+```text
+build/package/
+  <Plugin>/
+  <Plugin>-Release.zip
+```
+
+除非项目已有其他规范或用户明确指定，不另建长期 `release/` 目录，也不生成第二个“测试包”ZIP；本地测试目录本身就是测试包。
+
 ### 最终对外 ZIP 检查
 
 - ZIP 已更新，且只包含 DLL、`PluginInfo.json`、`config.json`、`config说明.json` 和确属运行必需的额外文件；每个额外文件都能说明运行依赖原因。
@@ -80,6 +90,8 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 - 白名单/黑名单、奖励、权限名单、Webhook 等会生效的示例数据只放在 `config说明.json`，正式 `config.json` 保持空列表、关闭或无目标等安全默认值。
 
 生成 ZIP 时优先使用临时 staging 或显式 ZIP 白名单；如果直接从本地测试目录压缩，可先生成 ZIP，再把 `README.md`、`CHANGELOG.md` 等副本放回测试目录。验证脚本应同时断言 ZIP 条目符合白名单，且本地测试目录及其配置未被精简流程破坏。
+
+临时 staging 默认放在 `build/package/.<Plugin>-<Configuration>-zip-stage/` 这类点号开头的内部目录中。递归删除前先解析绝对路径并确认目标位于当前项目的 `build/package/` 内；创建、复制、压缩和校验放进 `try/finally`，保证成功、失败或校验异常后都清理。最终还要枚举 `build/package/`、查看 ZIP 条目，并确认 `build/` 下没有 `stage` / `staging` 残留或无脚本引用的一次性验证包、日志。
 
 ## 交付信息
 

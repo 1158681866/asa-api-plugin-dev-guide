@@ -27,6 +27,8 @@
 - [ ] core tests 通过。
 - [ ] 本地 `build/package/<Plugin>` 测试目录已刷新。
 - [ ] 本地测试目录未因精简 ZIP 删除 `README.md`、`CHANGELOG.md` 副本或覆盖本地配置。
+- [ ] 已实际枚举 `build/package/` 顶层；默认只显示 `<Plugin>/` 本地测试目录与同级 Release ZIP，没有额外测试 ZIP 或长期 `release/` 目录。
+- [ ] `build/` 下不存在打包或校验遗留的 `stage` / `staging` 目录、一次性验证 ZIP 或重定向日志。
 - [ ] 正式发布 DLL 来自本次 `Release|x64` 重建；若复用既有 DLL，新鲜度门禁已覆盖源码、`.sln/.vcxproj` 和项目自定义 `.props/.targets`。
 - [ ] 最终 ZIP 内 DLL 的 `Format: RSDS` 未泄露盘符、UNC、用户目录等本机 PDB 路径，ZIP staging 的已知本机路径扫描无命中。
 - [ ] DLL 时间是本次构建时间。
@@ -44,6 +46,7 @@
 - [ ] `README.md`、`CHANGELOG.md` 等开发者文档未进入 ZIP，但源码树和本地测试目录中的文件未被删除。
 - [ ] 除标准四类文件外的每个额外文件都确属运行必需，并已在源码文档中说明依赖原因。
 - [ ] ZIP 通过临时 staging、显式条目白名单或等价流程生成，验证结果不依赖清空本地测试目录。
+- [ ] 临时 staging 的递归清理有项目包目录边界检查，并由 `try/finally` 覆盖成功、失败和校验异常路径。
 
 ## 上服测试
 

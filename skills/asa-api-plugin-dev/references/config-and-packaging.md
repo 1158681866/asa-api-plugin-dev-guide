@@ -147,6 +147,7 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 如果有打包脚本，执行打包脚本。随后分别检查本地测试目录和最终对外 ZIP：
 
 - `build/package/<Plugin>/` 本地测试目录存在并已刷新；其中可以保留 `README.md`、`CHANGELOG.md` 副本和本地配置。
+- 默认 `build/package/` 顶层只清楚呈现 `<Plugin>/` 本地测试目录与同级 Release ZIP；除非项目已有其他规范或用户明确指定，不另建长期 `release/` 目录，也不额外生成测试 ZIP。
 - 正式发布优先执行 `Release|x64` 重建；若只做新鲜度门禁，除源码外还要覆盖 `.sln/.vcxproj` 和参与构建的项目自定义 `.props/.targets`，任一输入较新时拒绝打包。
 - 对最终 ZIP 内 DLL 执行 `dumpbin /headers`，确认 `Format: RSDS` 不含本机绝对 PDB 路径；同时扫描 ZIP staging 中的用户目录、项目根目录和 SDK 根目录片段。
 - 最终 ZIP 内 DLL 时间是本次构建时间。
@@ -159,6 +160,8 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 - 对外 ZIP 的检查要区分“说明示例”和“运行值”：仅敏感字段使用脱敏占位符；会生效的示例 ID/名单不得写进正式 `config.json`。
 - 打包脚本处理中文文件名时优先使用 `-LiteralPath`，并显式检查 `config说明.json` 这个最终文件名；不要只看控制台乱码输出。
 - ZIP 优先从临时 staging 或显式文件白名单生成；也可以先压缩再把开发文档副本放回本地测试目录。验证脚本应断言 ZIP 条目白名单和本地测试目录完整性，不得靠删除测试目录内容来通过检查。
+- 临时 staging 默认使用 `build/package/.<Plugin>-<Configuration>-zip-stage/` 这类隐藏内部目录。任何递归删除前先解析绝对路径并断言目标位于当前项目的 `build/package/` 内；把创建、复制、压缩和校验放入 `try/finally`，确保成功、失败或校验异常后都清理 staging。
+- 发布验收除列出 `build/package/` 顶层和 ZIP 条目外，还要搜索 `build/` 下的 `stage` / `staging` 目录并断言无残留；一次性验证 ZIP、重定向日志和旧发布物没有脚本引用时也不应长期留在最终目录视图中。
 - 清理旧 release 目录前必须解析并校验目标路径确实位于项目自己的 release 子目录下，避免误删，同时避免旧包残留伪造出“打包成功”。
 
 交付时分别给出本地测试目录、最终对外 ZIP 和 DLL 时间。
