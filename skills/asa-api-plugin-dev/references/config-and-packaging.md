@@ -160,6 +160,7 @@ $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild 
 - 对外 ZIP 的检查要区分“说明示例”和“运行值”：仅敏感字段使用脱敏占位符；会生效的示例 ID/名单不得写进正式 `config.json`。
 - 打包脚本处理中文文件名时优先使用 `-LiteralPath`，并显式检查 `config说明.json` 这个最终文件名；不要只看控制台乱码输出。
 - ZIP 优先从临时 staging 或显式文件白名单生成；也可以先压缩再把开发文档副本放回本地测试目录。验证脚本应断言 ZIP 条目白名单和本地测试目录完整性，不得靠删除测试目录内容来通过检查。
+- 用 `ZipFile` / `ZipArchive` 枚举 ZIP 条目做白名单校验时，先把 `FullName` 中的反斜杠统一为正斜杠再比较。不同 PowerShell、.NET 和压缩实现暴露的路径分隔符可能不同，不能让平台分隔符差异把完整发布包误报为缺文件。
 - 临时 staging 默认使用 `build/package/.<Plugin>-<Configuration>-zip-stage/` 这类隐藏内部目录。任何递归删除前先解析绝对路径并断言目标位于当前项目的 `build/package/` 内；把创建、复制、压缩和校验放入 `try/finally`，确保成功、失败或校验异常后都清理 staging。
 - 发布验收除列出 `build/package/` 顶层和 ZIP 条目外，还要搜索 `build/` 下的 `stage` / `staging` 目录并断言无残留；一次性验证 ZIP、重定向日志和旧发布物没有脚本引用时也不应长期留在最终目录视图中。
 - 清理旧 release 目录前必须解析并校验目标路径确实位于项目自己的 release 子目录下，避免误删，同时避免旧包残留伪造出“打包成功”。
