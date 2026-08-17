@@ -88,3 +88,12 @@ Timer 回调仍然属于插件代码边界，不能假设 AsaApi 会替插件吞
 循环里刷几百行无筛选日志
 ```
 
+## 游戏对象、库存与批处理
+
+- `InventoryItemsField()` 可能混入“应用装饰”提供的虚拟外观对象。快照与恢复优先检查序列化实例的 `IsUnlockedCosmetic` / `IsAutoUnlocked`，不要只凭目录集合、蓝图名或 `bIsItemSkin` 排除；位字段还要确认当前 AsaApi offsets 存在。
+- 按范围或部落查 Actor 时，先评估 `GetAllActorsInRange(...)`、octree 查询或 `UGameplayStatics::GetAllActorsOfClassInTribe(...)`。核对当前版本签名和 offset；函数名不能证明内部一定使用高性能索引。
+- 排序前线性缓存位置、高度、血量等普通键，不在 `std::sort` 比较器里重复 `weak.Get()`、字段访问或 `NativeCall`。
+- 跨 Tick 队列使用 `GetWeakReference(actor)` 或可重新解析标识，不长期保存裸 `AActor*`；每批处理前重新检查有效性、类型和归属。
+- 删除结构/容器后，后续 Tick 可能因支撑链生成掉落物、死亡包或缓存包。主清理后延迟复查同部落对象和二级 Actor，归属使用明确字段，不按距离或名称猜测。
+- 日志、Status 和队列预览不要调用 `GetOrLoadTribeData()` / `LoadTribeData()` 这类存档级加载接口；读不到展示字段时使用安全兜底。
+

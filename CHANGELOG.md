@@ -2,6 +2,7 @@
 
 ## 未发布
 
+- 将 Skill 分发层改为 Agent Skills 开放格式优先：`skills/asa-api-plugin-dev` 成为唯一跨客户端权威源，`AGENTS.md`、`CLAUDE.md` 和 OpenAI UI 元数据只保留薄适配；安装脚本改为显式目标目录、默认拒绝覆盖，并在替换前备份现有部署。
 - 补充官方未发布分支的前向兼容用法：只用于固定 commit 的依赖键差分和非发布语法编译；核心、虚表或 Hook/offset 变更必须同源整体隔离验证，禁止与正式 Release 的库或 runtime 混搭。
 - 区分客户端显示、服务器广播与玩家入站聊天观察链；补充 AsaApi 2.03 `UserId` 多接收者去重风险、跨插件互操作契约和 synthetic sender 分层验收门禁。
 - 补充生成头 / `NativeCall` ABI 验证：编译通过、字符串解析和 getter 回读都不能证明 setter 与对象布局运行安全；高风险身份实验必须单对象、单字段、管理员显式触发并失败关闭。

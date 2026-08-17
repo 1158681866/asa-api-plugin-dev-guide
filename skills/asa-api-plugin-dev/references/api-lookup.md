@@ -8,7 +8,7 @@
 2. 如果官方资料已经足够支撑实现，直接按文档实现并停止查询；不要为了“保险”优先翻 SDK 字段或成熟插件源码。`文档优先` 高于 `SDK 里字段能编译`。
 3. 对常见能力先在官方文档/wiki 中找 AsaApi / ArkApi 标准封装、`AsaApi::GetApiUtils()`、SDK helper 或对象公开安全函数；不要先写底层字段访问再回头找封装。
 4. 官方没有、写得不清楚、疑似过期，或编译/签名对不上时，再从项目文件里找 SDK include / lib 路径。
-5. 只有进入第 4 步后，才用 `rg` 搜本地 AsaApi SDK 头文件，确认当前编译版本的签名和字段。
+5. 只有进入第 4 步后，才搜索本地 AsaApi SDK 头文件，确认当前编译版本的签名和字段。有 `rg` 时优先使用；没有时使用 `git grep`、PowerShell `Select-String` 或当前 Agent 提供的等价搜索能力。
 6. 需要借鉴业务写法时，再看成熟插件源码。
 7. 如果本地 SDK 和官方文档 / wiki 不一致，编译以本地 SDK 为准，并在交付说明里标出差异。
 
@@ -43,12 +43,15 @@
 
 ## 常用搜索
 
+使用任一能递归搜索源码并显示文件与行号的工具即可。例如：
+
 ```powershell
 rg -n "DECLARE_HOOK|SetHook|FunctionName" <sdk-or-project>
-rg -n "ClientServerChatDirectMessage|SendServerMessage|SendChatMessage|SendNotification" <sdk>
-rg -n "GetNativePointerField|Field\\(\\)" <sdk>
-rg -n "ToStringUTF8|FromStringUTF8|TCHAR_TO_UTF8|TCHAR_TO_ANSI" <sdk-or-project>
+git grep -n -E "DECLARE_HOOK|SetHook|FunctionName" -- <path>
+Get-ChildItem <sdk-or-project> -Recurse -File | Select-String "DECLARE_HOOK|SetHook|FunctionName"
 ```
+
+同样的方法可用于搜索消息接口、字段访问器和 UTF-8 转换函数；不要因为某个 Agent 没有 `rg` 就跳过符号核对。
 
 ## 字符串编码
 

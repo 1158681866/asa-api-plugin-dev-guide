@@ -9,7 +9,7 @@
 1. 先查官方文档 / ASA API Wiki：`https://arkserverapi.wiki/asa/index.html`。
 2. 如果 Wiki 已经足够支撑实现，停止查询。
 3. Wiki 没有、写得不清楚、疑似过期，或编译/签名对不上时，再从项目文件里找 SDK include / lib 路径。
-4. 只有进入第 3 步后，才用 `rg` 搜本地 AsaApi SDK 头文件，确认当前编译版本的签名和字段。
+4. 只有进入第 3 步后，才搜索本地 AsaApi SDK 头文件，确认当前编译版本的签名和字段。有 `rg` 时优先使用；没有时使用 `git grep`、PowerShell `Select-String` 或当前 Agent 提供的等价搜索能力。
 
 ```powershell
 rg -n "DECLARE_HOOK|SetHook|<FunctionName>" <sdk-or-project>

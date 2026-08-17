@@ -2,7 +2,7 @@
 
 面向 Ark Survival Ascended 的 AsaApi / ArkServerApi C++ 插件开发指导项目。
 
-这个仓库不是某一个服务器插件，也不是可以直接放进 `ArkApi/Plugins` 的 DLL。它是一套给开发者和 AI Agent 使用的开发手册、Codex skill、项目模板和发布检查清单，目标是让 ASA API 插件从“能编译”走向“可验证、可排错、可发布、可维护”。
+这个仓库不是服务器插件 DLL。它同时提供开发手册、项目模板、发布检查清单和一个遵循 [Agent Skills 开放格式](https://agentskills.io/specification) 的可移植 Skill，目标是让 ASA API 插件从“能编译”走向“可验证、可排错、可发布、可维护”。
 
 ## 这个项目能做什么
 
@@ -12,7 +12,7 @@
 - 提供崩服、服务器无响应、无 crash 日志、功能不生效时的排错流程。
 - 提供配置说明、测试、编译、打包、发布和回滚检查清单。
 - 提供可复制的新插件目录结构模板。
-- 提供 Codex skill，方便 Codex 在处理 ASA API 插件任务时自动套用这套规则。
+- 提供跨 Agent 使用的 `asa-api-plugin-dev` Skill；平台专用文件仅作为自动发现适配器。
 
 ## 适用范围
 
@@ -35,76 +35,71 @@
 
 ## 快速开始
 
-克隆仓库：
-
 ```powershell
 git clone https://github.com/1158681866/asa-api-plugin-dev-guide.git
 cd asa-api-plugin-dev-guide
 ```
 
-推荐先看：
+人工阅读从 `docs/README.md` 开始。Agent 使用时，权威入口始终是：
 
 ```text
-README.md
-docs/README.md
-AGENTS.md
-docs/release-checklist.md
+skills/asa-api-plugin-dev/SKILL.md
 ```
 
-如果你是人工开发者，先读 `docs/README.md` 进入专题文档。如果你是让 Codex、Claude Code 等 Agent 工作，先看 `AGENTS.md`、`CLAUDE.md` 和 `docs/agent-usage.md`。
-
-## 安装为 Codex Skill
-
-仓库内置 Codex skill：
+完整 bundle：
 
 ```text
-skills/asa-api-plugin-dev
+skills/asa-api-plugin-dev/
+├── SKILL.md
+├── references/
+└── agents/openai.yaml   # 可选 OpenAI UI 适配元数据
 ```
 
-安装到当前 Windows 用户的 Codex skills 目录：
+`SKILL.md` 与 `references/` 承载通用规则。根目录 `AGENTS.md`、`CLAUDE.md` 是仓库级薄入口；`agents/openai.yaml` 是可选 OpenAI UI/调用策略元数据。它们都不维护另一套 ASA 开发规则。
+
+## 安装到支持 Agent Skills 的客户端
+
+把整个 `skills/asa-api-plugin-dev` 目录复制到所用 Agent 当前文档声明的 Skills 根目录。Windows 下可用通用安装脚本：
 
 ```powershell
-.\scripts\install-skill.ps1 -Force
+.\scripts\install-skill.ps1 -SkillsRoot '<agent-skills-root>'
 ```
 
-等价手动安装：
+或者直接指定最终目录：
 
 ```powershell
-Copy-Item -Recurse .\skills\asa-api-plugin-dev "$env:USERPROFILE\.codex\skills\asa-api-plugin-dev" -Force
+.\scripts\install-skill.ps1 -Destination '<agent-skills-root>\asa-api-plugin-dev'
 ```
 
-安装后重启 Codex 或新开会话，让 skill 列表刷新。
+目标已存在时默认拒绝覆盖。确需替换时使用 `-Replace`，脚本会先在 Skills 发现目录之外创建时间戳备份；可用 `-BackupRoot` 显式指定备份根目录。各客户端路径只是适配信息，不属于 Skill 标准。当前常见做法：
 
-这个 skill 会在任务涉及 ASA API 插件、ArkServerApi/AsaApi Hook、配置文件、聊天命令、游戏内通知、崩服日志、打包发布时触发。skill 的作用是给 Agent 一个短流程入口；完整解释仍放在 `docs/` 中。
+- Codex、Gemini CLI、Cursor、GitHub Copilot 等客户端支持用户级 `~/.agents/skills` 或项目级 `.agents/skills`。
+- Claude Code 使用个人 `~/.claude/skills` 或项目 `.claude/skills`，可以链接到同一份 `.agents/skills/asa-api-plugin-dev`，避免维护重复副本。
+- 旧版或定制客户端可能仍使用自己的历史目录；以其当前官方文档为准，不把历史路径写进核心 Skill。
 
-## 配合 Agent 使用
-
-本仓库提供两个项目级入口：
+不支持自动发现的 Agent 也可以显式读取：
 
 ```text
-AGENTS.md
-CLAUDE.md
+读取并遵循 <guide>/skills/asa-api-plugin-dev/SKILL.md，
+所有 references 路径以该 Skill 目录为基准，只加载当前任务需要的文件。
 ```
 
-推荐用法：
+不要只复制 `AGENTS.md` 或 `CLAUDE.md`；脱离完整 bundle 后相对引用会失效。详细集成方式见 [`docs/agent-usage.md`](docs/agent-usage.md) 和 [`docs/usage.md`](docs/usage.md)。
 
-- Codex：读取 `AGENTS.md`。
-- Claude Code：读取 `CLAUDE.md`。
-- 长期维护的插件项目：把 `AGENTS.md` / `CLAUDE.md` 复制到实际插件项目根目录。
-- 临时排错或审查：在任务里明确要求参考本仓库。
+仓库内置一个不依赖特定 Agent 客户端的基础格式检查：
 
-示例任务：
-
-```text
-参考 asa-api-plugin-dev-guide 的 AGENTS.md，检查这个 ASA API 插件的 Hook、配置和打包流程。
+```powershell
+.\scripts\validate-skill.ps1
 ```
 
-```text
-按 asa-api-plugin-dev-guide 的发布检查清单，准备这个插件的 Release 包。
+发布或对外共享前，还可以使用 Agent Skills 官方参考校验器。中文 Windows 终端先强制 Python 使用 UTF-8：
+
+```powershell
+$env:PYTHONUTF8='1'
+uvx --from skills-ref agentskills validate ./skills/asa-api-plugin-dev
 ```
 
-不要把本仓库“安装到 ASA 服务器”。服务器需要的是实际插件包，本仓库只是开发指导项目。
-
+如果已经从源码安装参考工具，也可以使用它提供的等价 `skills-ref validate` 入口。
 ## 新插件项目结构
 
 可以复制模板目录作为新插件起点：
@@ -261,7 +256,7 @@ RCON / 控制台重载可以减少重启服务器次数。玩家可见回执要�
 推荐阅读顺序：
 
 1. [使用方式](docs/usage.md)
-2. [Agent 使用](docs/agent-usage.md)
+2. [Agent Skill 集成](docs/agent-usage.md)
 3. [开发原则](docs/principles.md)
 4. [开发流程](docs/development-workflow.md)
 5. [环境与 SDK](docs/environment.md)
@@ -269,12 +264,13 @@ RCON / 控制台重载可以减少重启服务器次数。玩家可见回执要�
 7. [API 来源与结论分级](docs/official-api-sources.md)
 8. [API 与 Hook 查询](docs/api-lookup.md)
 9. [稳定性建议](docs/stability.md)
-10. [配置与命令](docs/config-and-commands.md)
-11. [通知与聊天](docs/messaging.md)
-12. [测试、编译与打包](docs/build-test-package.md)
-13. [排错手册](docs/debugging.md)
-14. [指南迭代](docs/skill-evolution.md)
-15. [发布检查清单](docs/release-checklist.md)
+10. [数据库与外部系统](docs/database-and-integrations.md)
+11. [配置与命令](docs/config-and-commands.md)
+12. [通知与聊天](docs/messaging.md)
+13. [测试、编译与打包](docs/build-test-package.md)
+14. [排错手册](docs/debugging.md)
+15. [指南迭代](docs/skill-evolution.md)
+16. [发布检查清单](docs/release-checklist.md)
 
 ## 贡献方式
 

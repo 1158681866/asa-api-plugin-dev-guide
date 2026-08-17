@@ -3,7 +3,7 @@
 ## 基础
 
 - [使用方式](usage.md)
-- [Agent 使用](agent-usage.md)
+- [Agent Skill 集成](agent-usage.md)
 - [开发原则](principles.md)
 - [开发流程](development-workflow.md)
 - [环境与 SDK](environment.md)
@@ -15,6 +15,7 @@
 - [API 与 Hook 查询](api-lookup.md)
 - [配置与命令](config-and-commands.md)
 - [通知与聊天](messaging.md)
+- [数据库与外部系统](database-and-integrations.md)
 
 ## 稳定与排错
 
