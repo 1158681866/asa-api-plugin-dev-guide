@@ -45,9 +45,15 @@ API::Hooks::SetHookInternal()
 
 ## API 查询顺序
 
-1. 本地 SDK 头文件
-2. ASA API Wiki
-3. GitHub 源码
-4. 论坛/Discord 讨论
+1. 官方文档 / ASA API Wiki；资料足够时停止查询。
+2. 资料缺失、疑似过期或签名/编译不一致时，再查当前项目实际使用的 SDK。
+3. 必要时查官方 GitHub 实现和成熟插件源码。
+4. 论坛/Discord 讨论仅作补充线索。
 
-写代码以前，最终仍以本地 SDK 能否编译为准。
+编译以实际 SDK 的 C++ 声明为准，但编译通过不能证明运行时符号、参数 ABI、对象布局和游戏行为兼容。
+
+## 更新 SDK
+
+同时检查官方 Release、目标稳定分支与本地 commit，不仅比较 API 版本号。纯游戏头文件修正与核心/公开 ABI 变化采用不同构件策略；更新头文件不等于要替换服务器 API。
+
+具体判断、导入库来源和重编译要求统一见权威 Skill 的 [SDK 更新判断](../skills/asa-api-plugin-dev/references/api-lookup.md#sdk-更新判断)。

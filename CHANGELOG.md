@@ -2,6 +2,7 @@
 
 ## 未发布
 
+- 更新 SDK 跟进规则：同时检查正式发布、稳定分支与本地 commit；区分游戏头文件修正和核心/公开 ABI 变更，核对导入库来源与最低 API 版本。修正环境文档中“本地 SDK 优先”及“能编译即兼容”的旧结论。
 - 将 Skill 分发层改为 Agent Skills 开放格式优先：`skills/asa-api-plugin-dev` 成为唯一跨客户端权威源，`AGENTS.md`、`CLAUDE.md` 和 OpenAI UI 元数据只保留薄适配；安装脚本改为显式目标目录、默认拒绝覆盖，并在替换前备份现有部署。
 - 补充官方未发布分支的前向兼容用法：只用于固定 commit 的依赖键差分和非发布语法编译；核心、虚表或 Hook/offset 变更必须同源整体隔离验证，禁止与正式 Release 的库或 runtime 混搭。
 - 区分客户端显示、服务器广播与玩家入站聊天观察链；补充 AsaApi 2.03 `UserId` 多接收者去重风险、跨插件互操作契约和 synthetic sender 分层验收门禁。
@@ -30,7 +31,7 @@
 - 补充按部落查询 Actor 的接口检查：优先确认当前 SDK 是否提供 `UGameplayStatics::GetAllActorsOfClassInTribe(...)`，同时明确不能仅凭函数名推断内部使用了部落索引，仍需验证当前 API offset 与实际性能。
 - 简化 ASA API 更新后的默认开发流程：普通新插件使用同版本官方 SDK 与 `AsaApi.lib` 完成 Release 编译和核心功能测试即可；完整 API 变化清单每个版本只整理一次，DLL/缓存全量审计仅在 offset 报错、运行异常、缓存不完整或高风险发布等场景按需执行。
 - 新增 ASA API V2.00 / `89.31_Changes` 版本级有效变更审计，集中整理核心缓存机制、C++20、StaticClass/StaticStruct、库存函数签名和当前缓存缺失键，供该版本所有插件复用。
-- 补充 SDK 升级时的头文件 / `AsaApi.lib` 同源校验：切换 Git 分支后需重新生成库；只有进入深度审计时才额外记录时间、大小、哈希和完整接口清单。
+- 补充 SDK 升级时的构件来源校验：核心/公开 ABI 变化时使用匹配头文件、导入库与运行库；纯游戏头文件修正可在确认 ABI 未变后使用对应正式库，不再把切换分支本身视为必须重建库的依据。
 - 补充按需执行的 offset 全量兼容检查：触发深度审计后，不能只看新头文件是否编译通过，还应把 DLL 实际嵌入的函数、字段和位域键与对应服务端 EXE 的官方缓存交叉核对。
 - 补充大批量 Actor 跨 Tick 清理稳定性规则：不要长期保存裸 `AActor*`；按 ASA API Wiki 使用 `GetWeakReference(actor)` 保存 `TWeakObjectPtr<AActor>`，处理前再 `weak.Get()`，并重新校验归属。
 - 调整 `config说明.json` 发布标准：可使用字段表或 JSONC 短注释样例；面向小白服主时优先紧凑短注释，避免强制大段字段表。
