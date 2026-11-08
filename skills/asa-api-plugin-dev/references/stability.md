@@ -72,7 +72,8 @@ RCON、服务器控制台、聊天观察和定时器回调也不能未经验证�
 ## ASA API 2.03 命令卸载
 
 - ASA API 2.03 会在 `Plugin_Unload()` 返回后调用模块级清理，自动将该 DLL 注册的聊天、控制台、RCON 命令和命令回调置空并移出容器。
-- 不要在 `Plugin_Unload()` 中再次手动执行 `RemoveChatCommand`、`RemoveConsoleCommand` 或 `RemoveRconCommand`。如果卸载操作由 `plugins.unload` 的 RCON/控制台命令触发，API 命令分发仍持有一份 `shared_ptr` 快照；插件先手动移除命令会让后续模块级清理无法把快照中的 `std::function` 置空，DLL 被释放后快照析构可能在 `CheckCommands` / `_Ref_count_obj2::_Destroy` 崩溃。
+- 在 API 2.03 上，不要在 `Plugin_Unload()` 中再次手动执行 `RemoveChatCommand`、`RemoveConsoleCommand` 或 `RemoveRconCommand`。如果卸载操作由 `plugins.unload` 的 RCON/控制台命令触发，API 命令分发仍持有一份 `shared_ptr` 快照；插件先手动移除命令会让后续模块级清理无法把快照中的 `std::function` 置空，DLL 被释放后快照析构可能在 `CheckCommands` / `_Ref_count_obj2::_Destroy` 崩溃。
 - 动态配置重载时仍可增删命令，但不能在当前命令回调栈内直接修改同一命令容器；延迟到下一 tick/timer 执行。
 - 依赖上述模块级快照失效语义的插件必须把 `PluginInfo.MinApiVersion` 设为 `2.03` 或更高，并用同源 2.03+ 公共头与官方发布包中的 `AsaApi.lib` 构建。不能一边声明兼容 1.18/1.21，一边依赖仅在 2.03 才存在的卸载屏障。
+- API 2.1 已在 `RemoveCommand` 中先清空回调再删除容器项，修正手动移除时的快照问题；不要把 2.03 的缺陷写成所有后续版本仍然存在。普通插件仍可依赖模块级自动清理，无需为升级反向补回冗余移除；自有工作线程和活动回调仍需自行停止。核对依据为官方 `2.1` 标签的 `Commands.h` 和 `PluginManager.cpp`。
 

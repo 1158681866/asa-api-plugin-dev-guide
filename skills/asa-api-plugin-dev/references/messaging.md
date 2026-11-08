@@ -48,7 +48,7 @@ AsaApi 2.03 的公开 `ICommands` 提供聊天回调的注册与移除，但没�
 
 ## 聊天命令注册与原消息拦截
 
-- 普通聊天命令优先逐个使用 `AddChatCommand` 注册；不要默认用 `AddOnChatMessageCallback` 自行解析命令。ASA API 2.03 及以后会在 `Plugin_Unload()` 返回后按 DLL 模块自动清除命令和回调，因此不要再在 `Plugin_Unload()` 中手动调用 `RemoveChatCommand`、`RemoveConsoleCommand` 或 `RemoveRconCommand`。动态别名重载仍可使用对应 `Remove*`，但必须避开当前命令回调栈。
+- 普通聊天命令优先逐个使用 `AddChatCommand` 注册；不要默认用 `AddOnChatMessageCallback` 自行解析命令。ASA API 2.03 及以后会在 `Plugin_Unload()` 返回后按 DLL 模块自动清除命令和回调，普通卸载优先依赖自动清理。2.03 的手动移除快照缺陷与 2.1 修复见 [稳定性](stability.md#asa-api-203-命令卸载)。动态别名重载仍可使用对应 `Remove*`，但必须避开当前命令回调栈。
 - AsaApi 会先检查正式聊天命令。首个 token 匹配后会执行命令回调、将 `command_executed` 标记为 `true`，并在进入游戏原始聊天广播前返回，因此不需要额外的“隐藏命令”参数。
 - `AddOnChatMessageCallback` 返回 `true` 虽然也能阻止游戏默认广播，但所有聊天观察回调仍会被调用，而且自行识别的文本不会被标记为正式命令。聊天桥、Discord 转发或其他插件可能在看到 `command_executed=false` 时先记录或重新发送它，所以该接口更适合观察、过滤和修改普通聊天，不适合代替正式命令注册。
 - 如果命令别名支持热重载，不要在当前聊天命令回调栈内立即 `RemoveChatCommand` / `AddChatCommand`。AsaApi 的命令检查会直接遍历命令容器，回调内修改可能让迭代器失效；应延迟到下一 tick/timer 再同步别名。控制台/RCON 重载也可以统一走相同的延迟同步路径。
