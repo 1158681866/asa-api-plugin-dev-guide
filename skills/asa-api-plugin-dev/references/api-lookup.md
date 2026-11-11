@@ -29,6 +29,14 @@
 
 来源：[官方 2.1 公告](https://ark-server-api.com/resources/asa-server-api.31/updates#resource-update-1276)、[2.1 发布包](https://github.com/ArkServerApi/AsaApi/releases/tag/2.1)。
 
+### API 2.11 跟进
+
+- 官方 2.11 修正 UE 5.8 对象表结构布局，并调整 `TSoftClassPtr` 的字符串构造和 `HasOffset` 的声明。直接读取 `FUObjectArray`、`FUObjectItem`、对象表布局，或直接依赖受影响 `TSoftClassPtr` 构造行为的插件，应使用 2.11 头文件重新编译并重新验证。
+- 只通过 `TWeakObjectPtr`、`GetWeakReference`、`StaticClass()` / `GetPrivateStaticClass()`、公开 API helper 使用对象的插件，不应仅凭版本更新强制重编译；先检查实际 include、内联调用和 DLL 导入，再执行 Release 构建或最小运行验证。
+- 2.11 的对象表修正属于 API/运行时兼容更新，和服务端缓存是两件事：缓存负责当前游戏版本的函数/字段位置，头文件和 API 运行库负责调用契约与对象解析。两者都匹配目标服务器后才算完成上服验证。
+
+来源：[官方 2.11 发布提交](https://github.com/ArkServerApi/AsaApi/commit/475e0f2)、[2.11 发布页](https://github.com/ArkServerApi/AsaApi/releases/tag/2.11)。
+
 ## AsaApi 标准优先
 
 默认优先级：
